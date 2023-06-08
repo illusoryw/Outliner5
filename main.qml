@@ -9,4 +9,18 @@ Window {
     height: 480
     visible: true
     title: qsTr("Hello World")
+    Textediter{
+        id: editer
+        anchors.fill:parent
+        anchors.leftMargin: parent.width*(0.3)
+    }
+    MouseArea{
+        anchors.fill:parent
+        anchors.rightMargin: editer.width
+        onClicked: {
+            editer.focus=false
+            parent.focus=true
+            console.log("focus changed")
+        }
+    }
 }
