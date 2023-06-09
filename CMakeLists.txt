@@ -30,7 +30,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 set(PROJECT_SOURCES
         main.cpp
         qml.qrc
-
+filerwriter.cpp
+filerwriter.h
 
 )
 
