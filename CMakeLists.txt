@@ -30,6 +30,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
 set(PROJECT_SOURCES
         main.cpp
         qml.qrc
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
