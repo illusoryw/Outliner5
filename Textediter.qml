@@ -17,7 +17,8 @@ Rectangle{
             text: parent.markdown_sourse
             font.pixelSize: 20
             focus: editer.focus
-            visible: editer.focus
+            visible: focus
+            selectByMouse: true
             onTextChanged: {
                 multitext.text=text
                 parent.markdown_sourse=text
@@ -32,14 +33,14 @@ Rectangle{
             textFormat: Text.MarkdownText
             visible: !editer.focus
         }
-        MouseArea{
-            anchors.fill:parent
-            onClicked: {
-                //editer.forceActiveFocus();
-                editer.forceActiveFocus();
-                //srctext.focus=true;
-            }
-        }
+//        MouseArea{
+//            anchors.fill:parent
+//            onClicked: {
+//                //editer.forceActiveFocus();
+//                editer.forceActiveFocus();
+//                //srctext.focus=true;
+//            }
+//        }
 
 }
 }
