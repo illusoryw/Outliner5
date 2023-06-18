@@ -43,14 +43,14 @@ Rectangle{
             onClicked: {
                 //editer.forceActiveFocus();
                 srctext.forceActiveFocus();
-                mouse.accepted=false;
+                mouse.accepted=true;
                 //srctext.focus=true;
             }
-//            onPressed: mouse.accepted = false;
-//            onReleased: mouse.accepted = false;
-//            onDoubleClicked: mouse.accepted = false;
-//            onPositionChanged: mouse.accepted = false;
-//            onPressAndHold: mouse.accepted = false;
+            onPressed:
+            {
+                srctext.forceActiveFocus();
+                mouse.accepted=false;
+            }
         }
 
 }
