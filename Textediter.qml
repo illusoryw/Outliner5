@@ -1,8 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 FocusScope{
     id: editer
+    focus: true
 Rectangle{
         id: textshow
         anchors.fill:parent
@@ -19,6 +22,7 @@ Rectangle{
             focus: editer.focus
             visible: focus
             selectByMouse: true
+
             onTextChanged: {
                 multitext.text=text
                 parent.markdown_sourse=text
@@ -33,14 +37,21 @@ Rectangle{
             textFormat: Text.MarkdownText
             visible: !editer.focus
         }
-//        MouseArea{
-//            anchors.fill:parent
-//            onClicked: {
-//                //editer.forceActiveFocus();
-//                editer.forceActiveFocus();
-//                //srctext.focus=true;
-//            }
-//        }
+        MouseArea{
+            anchors.fill:parent
+            propagateComposedEvents:true
+            onClicked: {
+                //editer.forceActiveFocus();
+                srctext.forceActiveFocus();
+                mouse.accepted=false;
+                //srctext.focus=true;
+            }
+//            onPressed: mouse.accepted = false;
+//            onReleased: mouse.accepted = false;
+//            onDoubleClicked: mouse.accepted = false;
+//            onPositionChanged: mouse.accepted = false;
+//            onPressAndHold: mouse.accepted = false;
+        }
 
 }
 }
