@@ -3,7 +3,8 @@ import QtQuick.Window 2.13
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-Item {
+FocusScope {
+    id: bullet
     width: window.width
     implicitHeight: nodes.height // bind bullet height to editor height
     property var cur: {
@@ -11,6 +12,9 @@ Item {
     }
     property var childblocks: []
     property var childComp: null
+    property var nextItem: this
+    property alias atEnd: editer.atEnd
+    property alias atBegin: editer.atBegin
 
     RowLayout {
         anchors.fill: parent // fill the parent item
@@ -31,10 +35,12 @@ Item {
         Column {
             Layout.fillWidth: true // fill all available width
             id: nodes
-            TextEdit {
-                text: cur.raw // some text
-                font.pointSize: 14
-                wrapMode: TextEdit.Wrap // wrap text if too long
+            Textediter {
+                id: editer
+                focus: bullet.focus
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Component.onCompleted: defaultSource = cur.raw
             }
             Repeater {
                 model: childblocks
