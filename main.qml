@@ -93,5 +93,29 @@ Window {
         const curcolor = cur % ncolors
         const curval = curcolor * (1 / ncolors)
         return Qt.rgba(curval, curval, curval, 1)
+    // Textediter{
+    //     id: editer
+    //     anchors.fill:parent
+    //     anchors.leftMargin: parent.width*(0.3)
+    // }
+    // MouseArea{
+    //     anchors.fill:parent
+    //     anchors.rightMargin: editer.width
+    //     anchors.bottomMargin: editer.height*0.5
+    //     onClicked: {
+    //         editer.focus=false
+    //         parent.focus=true
+    //         console.log("focus changed leave Textediter")
+    //     }
+    // }
+    // MouseArea{
+    //     anchors.fill:parent
+    //     anchors.rightMargin: editer.width
+    //     anchors.topMargin: editer.height*0.5
+    //     onClicked: {
+    //         editer.focus=true
+    //         parent.focus=false
+    //         console.log("focus changed to Textediter")
+    //     }
     }
 }
