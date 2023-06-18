@@ -3,8 +3,6 @@
 #include<QString>
 #include <QtWidgets/QMessageBox>
 #include <stdio.h>
-#include <windows.h>
-#include <mmsystem.h>
 
 FileRWritter::FileRWritter(QObject *parent):QObject(parent)
 {
