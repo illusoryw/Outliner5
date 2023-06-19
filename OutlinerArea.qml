@@ -212,6 +212,18 @@ Item {
                 }
             }
             addNewBlock()
+
+            if (docmodel.count === 0) {
+                docmodel.append({
+                                    "cur": {
+                                        "raw": "",
+                                        "level": 0,
+                                        "collapsed": false
+                                    },
+                                    "bulletFocus_": false,
+                                    "displayCollapsed": 0
+                                })
+            }
         }
     }
 }
