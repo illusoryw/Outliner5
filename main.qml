@@ -7,7 +7,7 @@ import com.mytexteditor.filerwritter 1.0
 import Qt.labs.folderlistmodel 2.1
 
 ApplicationWindow {
-    //title: qsTr("TextEditor")
+    id: mainwindowid
     title: (filename == "") ? "outliner5" : filename + " -outliner5"
     width: 640
     height: 480
@@ -121,13 +121,6 @@ ApplicationWindow {
             }
         }
     }
-    function genColor(cur, tot) {
-        const ncolors = 10
-        const curcolor = cur % ncolors
-        const curval = curcolor * (1 / ncolors)
-        return Qt.rgba(curval, curval, curval, 1)
-    }
-    id: window
     property string filepath: ""
     property string filename: ""
 
@@ -174,6 +167,36 @@ ApplicationWindow {
     //                console.log("%s",folderPath)
     //            }
     //        }
+    toolBar: ToolBar {
+        RowLayout {
+            ToolButton {
+                text: "复制"
+                //  iconSource: "image/1.png"
+                onClicked: if (fileOpened) {
+                               textareaid.copy()
+                           }
+            }
+            ToolButton {
+                text: "粘贴"
+                onClicked: if (fileOpened) {
+                               textareaid.paste()
+                           }
+            }
+            ToolButton {
+                text: "剪切"
+                onClicked: if (fileOpened) {
+                               textareaid.cut()
+                           }
+            }
+            ToolButton {
+                text: "撤销"
+                onClicked: if (fileOpened) {
+                               textareaid.undo()
+                           }
+            }
+        }
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("文件(&F)")
@@ -224,7 +247,7 @@ ApplicationWindow {
             Menu {
                 title: qsTr("最近打开文件")
                 MenuItem {
-                    text: qsTr(window.visited1 == "" ? "无" : window.visited1)
+                    text: qsTr(mainwindowid.visited1 == "" ? "无" : mainwindowid.visited1)
                     onTriggered: {
                         clickvisited1 = true
                         if (textareaid.saved == false) {
@@ -235,7 +258,7 @@ ApplicationWindow {
                     }
                 }
                 MenuItem {
-                    text: qsTr(window.visited2 == "" ? "无" : window.visited2)
+                    text: qsTr(mainwindowid.visited2 == "" ? "无" : mainwindowid.visited2)
                     onTriggered: {
                         clickvisited2 = true
                         if (textareaid.saved == false) {
@@ -246,7 +269,7 @@ ApplicationWindow {
                     }
                 }
                 MenuItem {
-                    text: qsTr(window.visited3 == "" ? "无" : window.visited3)
+                    text: qsTr(mainwindowid.visited3 == "" ? "无" : mainwindowid.visited3)
                     onTriggered: {
                         clickvisited3 = true
                         if (textareaid.saved == false) {
@@ -257,7 +280,7 @@ ApplicationWindow {
                     }
                 }
                 MenuItem {
-                    text: qsTr(window.visited4 == "" ? "无" : window.visited4)
+                    text: qsTr(mainwindowid.visited4 == "" ? "无" : mainwindowid.visited4)
                     onTriggered: {
                         clickvisited4 = true
                         if (textareaid.saved == false) {
@@ -268,7 +291,7 @@ ApplicationWindow {
                     }
                 }
                 MenuItem {
-                    text: qsTr(window.visited5 == "" ? "无" : window.visited5)
+                    text: qsTr(mainwindowid.visited5 == "" ? "无" : mainwindowid.visited5)
                     onTriggered: {
                         clickvisited5 = true
                         if (textareaid.saved == false) {
@@ -285,8 +308,8 @@ ApplicationWindow {
                 shortcut: "Ctrl+Q"
                 onTriggered: //Qt.quit();程序直接结束
                              if (fileOpened && textareaid.saved) {
-                                 window.filepath = ""
-                                 window.filename = ""
+                                 mainwindowid.filepath = ""
+                                 mainwindowid.filename = ""
                                  textareaid.saved = false
                                  fileOpened = false
                              } else if (fileOpened) {
@@ -323,88 +346,6 @@ ApplicationWindow {
                 shortcut: "Ctrl+V"
                 onTriggered: if (fileOpened) {
                                  textareaid.paste()
-                             }
-            }
-            MenuItem {
-                text: qsTr("删除")
-                shortcut: "Del"
-                onTriggered: if (fileOpened) {
-                                 textareaid.remove(textareaid.selectionStart,
-                                                   textareaid.selectionEnd)
-                             }
-            }
-
-            MenuSeparator {}
-            MenuItem {
-                text: qsTr("查找")
-                shortcut: "Ctrl+F"
-                onTriggered: if (fileOpened) {
-                                 findtextdlg.visible = true
-                             }
-            }
-            MenuItem {
-                text: qsTr("查找下一个")
-
-                // shortcut: "Ctrl+X"
-            }
-            MenuItem {
-                text: qsTr("替换")
-                shortcut: "Ctrl+H"
-            }
-            MenuItem {
-                text: qsTr("转到")
-                shortcut: "Ctrl+G"
-                onTriggered: ;
-            }
-            MenuSeparator {}
-            MenuItem {
-                text: qsTr("全选")
-                shortcut: "Ctrl+A"
-                onTriggered: if (fileOpened) {
-                                 textareaid.selectAll()
-                             }
-            }
-            MenuItem {
-                text: qsTr("日期/时间")
-                onTriggered: if (fileOpened) {
-                                 textareaid.insert(
-                                             textareaid.cursorPosition,
-                                             Qt.formatDateTime(
-                                                 new Date(),
-                                                 "dddd yyyy-MM-dd MMM hh-mm-ss"))
-                             }
-                //shortcut: "Ctrl+X"
-            }
-        }
-        Menu {
-            title: qsTr("格式(&O)")
-            MenuItem {
-                id: autoReturnMenuid
-                text: qsTr("自动换行")
-                shortcut: "Ctrl+Z"
-                checkable: true
-                onTriggered: if (fileOpened) {
-                                 setStatusBarState()
-                             }
-            }
-
-            MenuItem {
-                text: qsTr("字体")
-                shortcut: "Ctrl+C"
-                onTriggered: if (fileOpened) {
-                                 fontDialog.open()
-                             }
-            }
-        }
-        Menu {
-            title: qsTr("查看(&V)")
-            MenuItem {
-                id: showStatusBarMenuid
-                text: qsTr("状态栏")
-                shortcut: "Ctrl+Z"
-                checkable: true
-                onTriggered: if (fileOpened) {
-                                 setStatusBarState()
                              }
             }
         }
@@ -498,25 +439,16 @@ ApplicationWindow {
 
     //}
     // 定义纯文本编辑框
-    statusBar: StatusBar {
-        id: statusbarid
-        visible: false
-        RowLayout {
-            //  anchors.fill: parent
-            Label {
-                text: ""
-                id: statuslabel
-            }
-            Rectangle {
-                width: 100
-                height: parent.height
-                color: "red"
-            }
-            Label {
-                text: "555"
-                id: positionlabel
-            }
-        }
+    TextArea {
+        id: textareaid
+        width: folderOpened ? parent.width - folderTreeView.width : parent.width
+        height: parent.height
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        property bool saved: false
+        onTextChanged: saved = false
+        visible: fileOpened
     }
 
     function changevisited(currentfilename) {
@@ -533,52 +465,52 @@ ApplicationWindow {
             index = 5
 
         if (index == 0 || index == 5) {
-            window.visited5 = window.visited4
-            window.visited4 = window.visited3
-            window.visited3 = window.visited2
-            window.visited2 = window.visited1
-            window.visited1 = currentfilename
+            mainwindowid.visited5 = mainwindowid.visited4
+            mainwindowid.visited4 = mainwindowid.visited3
+            mainwindowid.visited3 = mainwindowid.visited2
+            mainwindowid.visited2 = mainwindowid.visited1
+            mainwindowid.visited1 = currentfilename
         } else if (index == 2) {
-            window.visited2 = window.visited1
-            window.visited1 = currentfilename
+            mainwindowid.visited2 = mainwindowid.visited1
+            mainwindowid.visited1 = currentfilename
         } else if (index == 3) {
-            window.visited3 = window.visited2
-            window.visited2 = window.visited1
-            window.visited1 = currentfilename
+            mainwindowid.visited3 = mainwindowid.visited2
+            mainwindowid.visited2 = mainwindowid.visited1
+            mainwindowid.visited1 = currentfilename
         } else if (index == 4) {
-            window.visited4 = window.visited3
-            window.visited3 = window.visited2
-            window.visited2 = window.visited1
-            window.visited1 = currentfilename
+            mainwindowid.visited4 = mainwindowid.visited3
+            mainwindowid.visited3 = mainwindowid.visited2
+            mainwindowid.visited2 = mainwindowid.visited1
+            mainwindowid.visited1 = currentfilename
         }
     }
     function openVisited() {
         var filename = ""
-        if (window.clickvisited1 == true)
-            filename = window.visited1
-        else if (window.clickvisited2 == true)
-            filename = window.visited2
-        else if (window.clickvisited3 == true)
-            filename = window.visited3
-        else if (window.clickvisited4 == true)
-            filename = window.visited4
-        else if (window.clickvisited5 == true)
-            filename = window.visited5
+        if (mainwindowid.clickvisited1 == true)
+            filename = mainwindowid.visited1
+        else if (mainwindowid.clickvisited2 == true)
+            filename = mainwindowid.visited2
+        else if (mainwindowid.clickvisited3 == true)
+            filename = mainwindowid.visited3
+        else if (mainwindowid.clickvisited4 == true)
+            filename = mainwindowid.visited4
+        else if (mainwindowid.clickvisited5 == true)
+            filename = mainwindowid.visited5
         //var  filename = openfileDialog.fileUrl;
         filerwritterid.m_fileName = filename
         var filedata = filerwritterid.readFile()
         textareaid.text = filedata
-        window.filepath = filename
-        //var tmp=window.filepath.lastIndexOf('/');
-        window.filename = filepath.substr((filepath.lastIndexOf('/') + 1))
+        mainwindowid.filepath = filename
+        //var tmp=mainwindowid.filepath.lastIndexOf('/');
+        mainwindowid.filename = filepath.substr((filepath.lastIndexOf('/') + 1))
         changevisited(filename)
-        //window.visited1=filename;
+        //mainwindowid.visited1=filename;
         textareaid.saved = false
-        window.clickvisited1 = false
-        window.clickvisited2 = false
-        window.clickvisited3 = false
-        window.clickvisited4 = false
-        window.clickvisited5 = false
+        mainwindowid.clickvisited1 = false
+        mainwindowid.clickvisited2 = false
+        mainwindowid.clickvisited3 = false
+        mainwindowid.clickvisited4 = false
+        mainwindowid.clickvisited5 = false
     }
     function openFile() {
         messageDialogopen.open()
@@ -588,32 +520,9 @@ ApplicationWindow {
         aboutappdialog.visible = true
     }
 
-    function setTextColor() {
-        textareaid.textColor = colorDialog.color
-    }
-
-    function setStatusBarState() {
-        positionlabel.text = textareaid.cursorPosition
-        if (autoReturnMenuid.checked) {
-            statusbarid.visible = false
-            showStatusBarMenuid.enabled = false
-        } else {
-            showStatusBarMenuid.enabled = true
-            if (showStatusBarMenuid.checked) {
-                statusbarid.visible = true
-            } else {
-                statusbarid.visible = false
-            }
-        }
-    }
-
-    function setTextFont() {
-        textareaid.font = fontDialog.font
-    }
-
     function clearTextArea() {
-        textareaid.selectAll()
-        textareaid.remove(0, textareaid.cursorPosition)
+        // TODO
+        console.log("TODO")
     }
 
     function newFile() {
@@ -627,20 +536,20 @@ ApplicationWindow {
             messageDialog.open()
         } else {
             clearTextArea()
-            window.filepath = ""
-            window.filename = ""
+            mainwindowid.filepath = ""
+            mainwindowid.filename = ""
         }
 
         //  clearTextArea();
-        //   window.filepath="";
+        //   mainwindowid.filepath="";
     }
 
     function saveFile() {
-        if (window.filepath.length == 0) //由于使用了fileOpened，所以这里可以省去
+        if (mainwindowid.filepath.length == 0) //由于使用了fileOpened，所以这里可以省去
         {
             fileDialog.open()
         } else {
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
         }
         textareaid.saved = true
@@ -648,132 +557,6 @@ ApplicationWindow {
 
     function saveanotherFile() {
         fileDialogsaveanother.open()
-    }
-
-    function changeCaseSensitiveState() {
-        if (casecheckid.checked) {
-            findtextdlg.casesensitve = true
-        } else {
-            findtextdlg.casesensitve = false
-        }
-    }
-
-    function changeFindTextWard() {
-        if (upbuttonid.checked) {
-            findtextdlg.upward = true
-        } else if (donwbuttonid.checked) {
-            findtextdlg.upward = false
-        }
-    }
-
-    function findNextText() {
-        if (findtextdlg.index === -1 || textareaid.text.length == 0) {
-            return
-        }
-
-        var start_index = 0
-        if (findtextdlg.index > 0) {
-            start_index = findtextdlg.index + textfieldid.text.length
-            if (findtextdlg.upward) {
-                start_index = findtextdlg.index
-            }
-        } else if (findtextdlg.upward) {
-            start_index = textareaid.text.length
-        }
-        console.log("startindex :" + start_index)
-
-        var contentstr
-        var findText
-        if (findtextdlg.casesensitve == true) {
-            contentstr = textareaid.text.substring(start_index)
-            if (findtextdlg.upward) {
-                contentstr = textareaid.text.substring(0, start_index).trim()
-            }
-            findText = textfieldid.text
-        } else {
-            contentstr = textareaid.text.substring(start_index).toLowerCase()
-            if (findtextdlg.upward) {
-                contentstr = textareaid.text.substring(
-                            0, start_index).toLowerCase().trim()
-            }
-            findText = textfieldid.text.toLowerCase()
-        }
-        console.log("contentstr :" + contentstr)
-        if (contentstr.length === 0) {
-            return
-        }
-
-        var index = contentstr.indexOf(findText)
-        if (findtextdlg.upward) {
-            index = contentstr.lastIndexOf(findText)
-        }
-        console.log("index :" + index)
-
-        if (index < 0) {
-            completeFindDialog.open()
-            findtextdlg.index = -1
-            return
-        }
-
-        var old_index = findtextdlg.index
-        var select_start = old_index + index + textfieldid.text.length
-        var select_end = textfieldid.text.length + old_index + textfieldid.text.length + index
-        if (old_index == 0) {
-            select_start = old_index + index
-            select_end = old_index + textfieldid.text.length + index
-        } else if (findtextdlg.upward) {
-            select_start = index
-            select_end = textfieldid.text.length + index
-        }
-        console.log("select_start :" + select_start)
-        console.log("select_end :" + select_end)
-
-        textareaid.select(select_start, select_end)
-        findtextdlg.index = old_index + index + textfieldid.text.length
-        if (findtextdlg.upward) {
-            findtextdlg.index = index
-        }
-        console.log("findtextdlg.index :" + findtextdlg.index)
-        if ((findtextdlg.upward && index === 0)) {
-            completeFindDialog.open()
-            findtextdlg.index = -1
-            return
-        }
-    }
-
-    function changeButtonState() {
-        if (textfieldid.text.length != 0) {
-            findnextid.enabled = true
-        } else {
-            findnextid.enabled = false
-        }
-    }
-
-    function reject() {
-        findtextdlg.index = 0
-        findtextdlg.casesensitve = false
-        findtextdlg.upward = false
-        findtextdlg.close()
-        casecheckid.checked = false
-        upbuttonid.checked = false
-        donwbuttonid.checked = true
-        textfieldid.text = ""
-
-        console.log("close dialog")
-    }
-
-    ColorDialog {
-        id: colorDialog
-        title: "Please choose a color"
-        onAccepted: {
-            setTextColor()
-        }
-        onRejected: {
-
-            // console.log("Canceled")
-            // Qt.quit()
-        }
-        //Component.onCompleted: visible = true
     }
 
     MessageDialog {
@@ -784,64 +567,64 @@ ApplicationWindow {
         standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
         onYes: {
             //保存已打开文件
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
             textareaid.saved = true
             //openfileDialog.open()
             openVisited()
             //        var filename="";
-            //        if(window.clickvisited1==true) filename=window.visited1;
-            //        else if(window.clickvisited2==true) filename=window.visited2;
-            //        else if(window.clickvisited3==true) filename=window.visited3;
-            //        else if(window.clickvisited4==true) filename=window.visited4;
-            //        else if(window.clickvisited5==true) filename=window.visited5;
+            //        if(mainwindowid.clickvisited1==true) filename=mainwindowid.visited1;
+            //        else if(mainwindowid.clickvisited2==true) filename=mainwindowid.visited2;
+            //        else if(mainwindowid.clickvisited3==true) filename=mainwindowid.visited3;
+            //        else if(mainwindowid.clickvisited4==true) filename=mainwindowid.visited4;
+            //        else if(mainwindowid.clickvisited5==true) filename=mainwindowid.visited5;
             //        //var  filename = openfileDialog.fileUrl;
             //        filerwritterid.m_fileName = filename;
             //        var filedata = filerwritterid.readFile();
             //        textareaid.text = filedata;
-            //        window.filepath = filename;
-            //        //var tmp=window.filepath.lastIndexOf('/');
-            //        window.filename=filepath.substr((filepath.lastIndexOf('/')+1));
+            //        mainwindowid.filepath = filename;
+            //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
+            //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
             //        changevisited(filename);
-            //        //window.visited1=filename;
+            //        //mainwindowid.visited1=filename;
             //        textareaid.saved=false;
-            //        window.clickvisited1=false;
-            //        window.clickvisited2=false;
-            //        window.clickvisited3=false;
-            //        window.clickvisited4=false;
-            //        window.clickvisited5=false;
+            //        mainwindowid.clickvisited1=false;
+            //        mainwindowid.clickvisited2=false;
+            //        mainwindowid.clickvisited3=false;
+            //        mainwindowid.clickvisited4=false;
+            //        mainwindowid.clickvisited5=false;
         }
         onNo: {
             //openfileDialog.open()
             openVisited()
             //        var filename="";
-            //        if(window.clickvisited1==true) filename=window.visited1;
-            //        else if(window.clickvisited2==true) filename=window.visited2;
-            //        else if(window.clickvisited3==true) filename=window.visited3;
-            //        else if(window.clickvisited4==true) filename=window.visited4;
-            //        else if(window.clickvisited5==true) filename=window.visited5;
+            //        if(mainwindowid.clickvisited1==true) filename=mainwindowid.visited1;
+            //        else if(mainwindowid.clickvisited2==true) filename=mainwindowid.visited2;
+            //        else if(mainwindowid.clickvisited3==true) filename=mainwindowid.visited3;
+            //        else if(mainwindowid.clickvisited4==true) filename=mainwindowid.visited4;
+            //        else if(mainwindowid.clickvisited5==true) filename=mainwindowid.visited5;
             //        //var  filename = openfileDialog.fileUrl;
             //        filerwritterid.m_fileName = filename;
             //        var filedata = filerwritterid.readFile();
             //        textareaid.text = filedata;
-            //        window.filepath = filename;
-            //        //var tmp=window.filepath.lastIndexOf('/');
-            //        window.filename=filepath.substr((filepath.lastIndexOf('/')+1));
+            //        mainwindowid.filepath = filename;
+            //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
+            //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
             //        changevisited(filename);
-            //        //window.visited1=filename;
+            //        //mainwindowid.visited1=filename;
             //        textareaid.saved=false;
-            //        window.clickvisited1=false;
-            //        window.clickvisited2=false;
-            //        window.clickvisited3=false;
-            //        window.clickvisited4=false;
-            //        window.clickvisited5=false;
+            //        mainwindowid.clickvisited1=false;
+            //        mainwindowid.clickvisited2=false;
+            //        mainwindowid.clickvisited3=false;
+            //        mainwindowid.clickvisited4=false;
+            //        mainwindowid.clickvisited5=false;
         }
         onRejected: {
-            window.clickvisited1 = false
-            window.clickvisited2 = false
-            window.clickvisited3 = false
-            window.clickvisited4 = false
-            window.clickvisited5 = false
+            mainwindowid.clickvisited1 = false
+            mainwindowid.clickvisited2 = false
+            mainwindowid.clickvisited3 = false
+            mainwindowid.clickvisited4 = false
+            mainwindowid.clickvisited5 = false
         }
 
         visible: false
@@ -855,7 +638,7 @@ ApplicationWindow {
         standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
         onYes: {
             //保存已打开文件
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
             textareaid.saved = true
             openfileDialog.open()
@@ -878,7 +661,7 @@ ApplicationWindow {
         property string texttmp: ""
         standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
         onYes: {
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
             textareaid.saved = true
             fileDialogsaveanother.open()
@@ -901,17 +684,17 @@ ApplicationWindow {
         property string texttmp: ""
         standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
         onYes: {
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
             textareaid.saved = true
-            window.filepath = ""
-            window.filename = ""
+            mainwindowid.filepath = ""
+            mainwindowid.filename = ""
             textareaid.saved = false
             fileOpened = false
         }
         onNo: {
-            window.filepath = ""
-            window.filename = ""
+            mainwindowid.filepath = ""
+            mainwindowid.filename = ""
             textareaid.saved = false
             fileOpened = false
         }
@@ -930,7 +713,7 @@ ApplicationWindow {
         property string texttmp: ""
         standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
         onYes: {
-            filerwritterid.m_fileName = window.filepath
+            filerwritterid.m_fileName = mainwindowid.filepath
             filerwritterid.saveFile(textareaid.text)
             textareaid.saved = true
             fileDialog.open()
@@ -952,21 +735,6 @@ ApplicationWindow {
         text: "outliner5是一款本地Markdown笔记软件，在支持对Markdown语法处理的同时将支持笔记大纲的分级处理与折叠显示。该软件系统将市面上常见的笔记管理软件与Markdown编辑器结合起来，具有功能丰富、使用方便、内容清晰等优点。"
     }
 
-    MessageDialog {
-        id: completeFindDialog
-        title: "提示"
-        text: "查找完毕"
-        standardButtons: StandardButton.Yes
-        onYes: {
-            close()
-        }
-        onNo: {
-            close()
-        }
-
-        visible: false
-    }
-
     FileDialog {
         id: openfileDialog //打开部分
         title: "选择需要打开的文件"
@@ -976,8 +744,8 @@ ApplicationWindow {
             if (fileOpened) {
                 //打开：已有文件打开
                 clearTextArea()
-                window.filepath = ""
-                window.filename = ""
+                mainwindowid.filepath = ""
+                mainwindowid.filename = ""
             } else {
                 fileOpened = true
             }
@@ -985,13 +753,13 @@ ApplicationWindow {
             filerwritterid.m_fileName = filename
             var filedata = filerwritterid.readFile()
             textareaid.text = filedata
-            window.filepath = filename
-            //var tmp=window.filepath.lastIndexOf('/');
-            window.filename = filepath.substr((filepath.lastIndexOf('/') + 1))
+            mainwindowid.filepath = filename
+            //var tmp=mainwindowid.filepath.lastIndexOf('/');
+            mainwindowid.filename = filepath.substr((filepath.lastIndexOf(
+                                                         '/') + 1))
             changevisited(filename)
-            //window.visited1=filename;
+            //mainwindowid.visited1=filename;
             textareaid.saved = false
-            console.error('data', filedata)
         }
         onRejected: {
 
@@ -1008,19 +776,20 @@ ApplicationWindow {
             if (fileOpened) {
                 //新建：文件已经打开
                 clearTextArea()
-                window.filepath = ""
-                window.filename = ""
+                mainwindowid.filepath = ""
+                mainwindowid.filename = ""
             } else {
                 fileOpened = true
             }
             var filename = fileDialog.fileUrl
             filerwritterid.m_fileName = filename
             filerwritterid.saveFile(textareaid.text)
-            window.filepath = filename
-            var tmp = window.filepath.lastIndexOf('/')
-            window.filename = filepath.substr((filepath.lastIndexOf('/') + 1))
+            mainwindowid.filepath = filename
+            var tmp = mainwindowid.filepath.lastIndexOf('/')
+            mainwindowid.filename = filepath.substr((filepath.lastIndexOf(
+                                                         '/') + 1))
             changevisited(filename)
-            //window.visited1=filename;
+            //mainwindowid.visited1=filename;
             textareaid.saved = false
         }
         onRejected: {
@@ -1038,11 +807,12 @@ ApplicationWindow {
             var filename = fileDialogsaveanother.fileUrl
             filerwritterid.m_fileName = filename
             filerwritterid.saveFile(textareaid.text)
-            window.filepath = filename
-            var tmp = window.filepath.lastIndexOf('/')
-            window.filename = filepath.substr((filepath.lastIndexOf('/') + 1))
+            mainwindowid.filepath = filename
+            var tmp = mainwindowid.filepath.lastIndexOf('/')
+            mainwindowid.filename = filepath.substr((filepath.lastIndexOf(
+                                                         '/') + 1))
             changevisited(filename)
-            //window.visited1=filename;
+            //mainwindowid.visited1=filename;
             textareaid.saved = false
         }
         onRejected: {
@@ -1050,130 +820,6 @@ ApplicationWindow {
         } //do nothing
     }
 
-    //FileDialog {
-    //    id: fileDialogcreate
-    //    title: "选择保存路径"
-    //    selectExisting:false;
-
-    //    nameFilters: [ " files (*.md )", "All files (*)" ]
-    //    onAccepted: {
-    //       var  filename = fileDialogcreate.fileUrl;
-    //        filerwritterid.m_fileName = filename;
-    //        filerwritterid.saveFile(messageDialog.texttmp);
-    //        //window.filepath = filename;
-    //    }
-
-    //}
-
-    //FileDialog {
-    //    id: fileDialogcreatenew
-    //    title: "选择保存路径"
-    //    selectExisting:false;
-
-    //    nameFilters: [ " files (*.md )", "All files (*)" ]
-    //    onAccepted: {
-    //       var  filename = fileDialogcreatenew.fileUrl;
-    //        filerwritterid.m_fileName = filename;
-    //        if(filerwritterid.saveFile(messageDialog.texttmp))
-    //        {
-    //            openfileDialog.open();
-    //        }
-
-    //        //window.filepath = filename;
-    //    }
-
-    //}
-    Dialog {
-        id: findtextdlg
-        visible: false
-        property int index: 0
-        property bool casesensitve: false
-        property bool upward: false
-
-        contentItem: RowLayout {
-
-            Layout.maximumWidth: 300
-            Layout.maximumHeight: 100
-
-            // anchors.fill: parent;
-            ColumnLayout {
-
-                RowLayout {
-                    Label {
-                        text: "查找内容"
-                    }
-                    TextField {
-                        id: textfieldid
-                        placeholderText: qsTr("输入要查找的内容")
-                        onTextChanged: changeButtonState()
-                    }
-                }
-                RowLayout {
-                    CheckBox {
-                        id: casecheckid
-                        text: "区分大小写"
-                        onCheckedChanged: changeCaseSensitiveState()
-                    }
-                    GroupBox {
-                        title: "方向"
-
-                        RowLayout {
-                            ExclusiveGroup {
-                                id: tabPositionGroup
-                            }
-                            RadioButton {
-                                id: upbuttonid
-                                text: "向上"
-                                checked: false
-                                exclusiveGroup: tabPositionGroup
-                                onCheckedChanged: changeFindTextWard()
-                            }
-                            RadioButton {
-                                id: donwbuttonid
-                                text: "向下"
-                                exclusiveGroup: tabPositionGroup
-                                onCheckedChanged: changeFindTextWard()
-                                checked: true
-                            }
-                        }
-                    }
-                }
-            }
-            ColumnLayout {
-                Button {
-                    id: findnextid
-                    text: "查找下一个"
-                    onClicked: findNextText()
-                    enabled: false
-                }
-                Button {
-                    id: cancelid
-                    text: "取消"
-                    onClicked: reject()
-                }
-            }
-        }
-
-        onVisibleChanged: closedlg()
-        //standardButtons: StandardButton.Save | StandardButton.Cancel
-    }
-
-    function closedlg() {
-        if (findtextdlg.visible == false) {
-            reject()
-        }
-    }
-
-    //TextArea
-    //{
-    //    property bool saved: false;
-    //    id:textareaid;
-    //    anchors.fill: parent;
-    //    onCursorPositionChanged:  setStatusBarState();
-    //    onTextChanged: saved=false;
-    //   // verticalScrollBarPolicy:Qt.ScrollBarAlwaysOff
-
-    //}
     FileRWritter {
         id: filerwritterid
         m_fileName: ""

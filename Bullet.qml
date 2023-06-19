@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 
 FocusScope {
     id: bullet
-    width: window.width
+    width: listview.width
     implicitHeight: nodes.height // bind bullet height to editor height
     property string raw: ''
     property bool collapsed: false
