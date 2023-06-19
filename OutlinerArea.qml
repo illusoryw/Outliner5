@@ -184,15 +184,6 @@ Item {
                 }
             }
             addNewBlock()
-
-            for (let i = 0; i < docmodel.count; ++i) {
-                const element = docmodel.get(i);
-                if (!element.cur.collapsed) continue;
-                const end = docmodel.getChildEnd(i);
-                for (let j = i + 1; j <= end; ++j) {
-                    docmodel.get(j).displayCollapsed++;
-                }
-            }
         }
     }
 }

@@ -59,7 +59,7 @@ FocusScope {
                     font.pixelSize: 8
                     anchors.centerIn: parent
                     visible: hoverhdlr.hovered
-                    Component.onCompleted: console.error('button', width)
+                    Component.onCompleted: checked = collapsed
                     onCheckedChanged: {
                         let end = docmodel.getChildEnd(indexInList)
                         let cur = docmodel.get(indexInList).cur
