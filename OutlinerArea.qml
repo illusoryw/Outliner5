@@ -189,13 +189,17 @@ Item {
                     const regex1 = /(\t*)(.*)/
                     let result1 = regex1.exec(line)
                     console.log(JSON.stringify(result1))
-                    if (result1[1].length === level && result1[2].length) {
+                    if (result1[1].length === level) {
                         console.log('same level')
-                        content += result1[2]
+                        if (result1[2].length) {
+                            content += result1[2]
+                        } else {
+                            content += "\n"
+                        }
                     } else {
                         console.log('new block')
                         addNewBlock()
-                        level = 0
+                        level = result1[1].length
                         collapsed = false
                         content = result1[2]
                     }
