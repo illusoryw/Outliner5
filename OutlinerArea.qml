@@ -103,7 +103,7 @@ Item {
                             "cur": {
                                 "raw": "",
                                 "level": 0,
-                                "collapsed": 0
+                                "collapsed": false
                             },
                             "bulletFocus_": false,
                             "displayCollapsed": 0
@@ -119,8 +119,8 @@ Item {
             for (var j = 0; j < element.cur.level; ++j) {
                 result.push("\t")
             }
-            if (element.displayCollapsed === 1) {
-                result.push("+ ")
+            if (element.cur.collapsed) {
+                result.push("+ ");
             } else {
                 result.push("- ")
             }
@@ -146,7 +146,7 @@ Item {
                                         "cur": {
                                             "raw": content,
                                             "level": level,
-                                            "collapsed": collapsed ? 1 : 0
+                                            "collapsed": collapsed
                                         },
                                         "bulletFocus_": false,
                                         "displayCollapsed": 0
@@ -185,14 +185,12 @@ Item {
             }
             addNewBlock()
 
-            for (var i = 0; i < docmodel.count; ++i) {
-                const element = docmodel.get(i)
-                if (element.cur.collapsed === 0)
-                    continue
-                const end = docmodel.getChildEnd(i)
-                for (var j = i + 1; j <= end; ++j) {
-                    docmodel.setProperty(i, "displayCollapsed",
-                                         element.displayCollapsed + 1)
+            for (let i = 0; i < docmodel.count; ++i) {
+                const element = docmodel.get(i);
+                if (!element.cur.collapsed) continue;
+                const end = docmodel.getChildEnd(i);
+                for (let j = i + 1; j <= end; ++j) {
+                    docmodel.get(j).displayCollapsed++;
                 }
             }
         }

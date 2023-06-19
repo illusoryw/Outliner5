@@ -141,8 +141,9 @@ FocusScope {
         }
     }
     function saveToModel() {
-        const cur = docmodel.get(index).cur;
+        const element = docmodel.get(index);
+        const cur = element.cur;
         cur.raw = srctext.text;
-        docmodel.setProperty(index, "cur", cur);
+        element.cur = cur;
     }
 }
