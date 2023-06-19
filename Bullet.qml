@@ -37,6 +37,8 @@ FocusScope {
         color: Qt.rgba(0, .5, .8, .3)
     }
 
+    signal textChanged();
+
     RowLayout {
         anchors.fill: parent // fill the parent item
         anchors.leftMargin: level * lineHeight
@@ -116,6 +118,9 @@ FocusScope {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 index: bullet.indexInList
+                onTextChanged: {
+                    bullet.textChanged();
+                }
             }
         }
     }

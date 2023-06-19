@@ -62,6 +62,9 @@ Item {
             bulletFocus: bulletFocus_
             visible: displayCollapsed === 0
             height: visible ? implicitHeight : 0
+            onTextChanged: {
+                root.textChanged();
+            }
         }
         Component.onCompleted: {
             console.info(this, parent, width, height)
@@ -94,29 +97,13 @@ Item {
         }
     }
 
-    function undo() {
-
-    }
-
-    function copy() {
-
-    }
-
-    function cut() {
-
-    }
-
-    function paste() {
-
-    }
-
     function clear() {
-        console.log("clear");
         docmodel.clear();
         docmodel.append({
                             "cur": {
                                 "raw": "",
-                                "level": 0
+                                "level": 0,
+                                "collapsed": 0
                             },
                             "bulletFocus_": false,
                             "displayCollapsed": 0
@@ -126,18 +113,33 @@ Item {
     signal textChanged();
 
     function getText() {
-
+        const result = [];
+        for (let i = 0; i < docmodel.count; ++i) {
+            const element = docmodel.get(i);
+            for (let j = 0; j < element.cur.level; ++j) {
+                result.push("\t");
+            }
+            if (element.displayCollapsed === 1) {
+                result.push("+ ");
+            } else {
+                result.push("- ");
+            }
+            result.push(element.cur.raw);
+            result.push("\n");
+        }
+        return result.join("");
     }
 
     function setText(value) {
         const lines = value.replace("\r\n", "\n").split("\n");
+
         if (lines.length === 0) {
-            console.log("set 1");
             clear();
         } else {
-            console.log("set 2");
-            let previousLevel = -1;
+            docmodel.clear();
             for (let line of lines) {
+                if (line === "") continue;
+
                 const regex = /(\t*)([-+]) (.*)/;
                 const result = regex.exec(line);
 
@@ -147,20 +149,29 @@ Item {
                     collapsed = false;
                     content = line;
                 } else {
-                    level = Math.min(previousLevel + 1, result[1].length);
+                    level = result[1].length;
                     collapsed = result[2] === "+";
                     content = result[3];
-                    previousLevel = result[1].length;
                 }
 
                 docmodel.append({
                                     "cur": {
                                         "raw": content,
-                                        "level": level
+                                        "level": level,
+                                        "collapsed": collapsed ? 1 : 0
                                     },
                                     "bulletFocus_": false,
-                                    "displayCollapsed": collapsed ? 1 : 0
+                                    "displayCollapsed": 0
                                 });
+            }
+
+            for (let i = 0; i < docmodel.count; ++i) {
+                const element = docmodel.get(i);
+                if (element.cur.collapsed === 0) continue;
+                const end = docmodel.getChildEnd(i);
+                for (let j = i + 1; j <= end; ++j) {
+                    docmodel.setProperty(i, "displayCollapsed", element.displayCollapsed + 1);
+                }
             }
         }
     }

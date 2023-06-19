@@ -50,45 +50,6 @@ ApplicationWindow {
     // 定义树形文件列表的宽度
     property int treeViewWidth: 200
 
-
-//        // 定义打开文件夹的对话框
-//        FileDialog {
-//            id: folderDialog
-//            title: "Open Folder"
-//            folder: shortcuts.home
-//            selectFolder: true
-//            onAccepted: {
-//                folderPath = folderDialog.fileUrl//改了，本来是folder
-//                folderOpened = true
-//                console.log("%s",folderPath)
-//            }
-//        }
-
-
-
-    toolBar:ToolBar
-    {
-    RowLayout {
-        ToolButton {
-            text:"复制";
-          //  iconSource: "image/1.png"
-            onClicked: if(fileOpened){textareaid.copy();}
-        }
-        ToolButton {
-            text:"粘贴"
-              onClicked: if(fileOpened){textareaid.paste();}
-        }
-        ToolButton {
-            text:"剪切";
-              onClicked: if(fileOpened){textareaid.cut();}
-        }
-        ToolButton {
-            text:"撤销";
-              onClicked: if(fileOpened){textareaid.undo();}
-        }
-    }
-}
-
 menuBar: MenuBar {
     Menu {
         title: qsTr("文件(&F)")
@@ -193,32 +154,6 @@ menuBar: MenuBar {
 
         }
 
-    }
-    Menu {
-        title: qsTr("编辑(&E)")
-        MenuItem {
-            text: qsTr("撤销")
-            shortcut: "Ctrl+Z"
-            onTriggered: if(fileOpened){textareaid.undo();}
-
-        }
-        MenuSeparator{}
-        MenuItem {
-            text: qsTr("复制")
-            shortcut: "Ctrl+C"
-            onTriggered: if(fileOpened){textareaid.copy();}
-
-        }
-        MenuItem {
-            text: qsTr("剪切")
-             onTriggered: if(fileOpened){textareaid.cut();}
-            shortcut: "Ctrl+X"
-        }
-        MenuItem {
-            text: qsTr("粘贴")
-            shortcut: "Ctrl+V"
-             onTriggered: if(fileOpened){textareaid.paste();}
-        }
     }
     Menu {
         title: qsTr("关于(&V)")
