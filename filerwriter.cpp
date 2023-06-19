@@ -20,7 +20,7 @@ bool FileRWritter::saveFile(QString filedata)
     //    return;
     //}
     //  int index = m_fileName.lastIndexOf(":");
-    QString filePath =m_fileName.right(m_fileName.length() - 8);
+    auto filePath =QUrl(m_fileName).toLocalFile();
     QFile file(filePath);
     if(file.exists())
     {
@@ -43,10 +43,9 @@ bool FileRWritter::saveFile(QString filedata)
 
 QString FileRWritter::readFile()
 {
-    QString filePath =m_fileName.right(m_fileName.length() - 8);
+    auto filePath =QUrl(m_fileName).toLocalFile();
     QFile file(filePath);
-
-    if(!file.open(QIODevice::ReadWrite))
+    if(!file.open(QFile::ReadWrite))
     {
        //QMessageBox::information(NULL,"提示","文件打开失败"+filePath);
         return "";
