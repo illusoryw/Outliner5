@@ -15,7 +15,6 @@ FocusScope {
     property int level: 0
     property int indexInList
     property bool bulletFocus
-    //    onLevelChanged: console.error(this, 'level changed to', level)
     function moveCursor(pos) {
         console.error('blt.moveCursor')
         editer.moveCursor(pos)
@@ -25,7 +24,6 @@ FocusScope {
     }
 
     onRawChanged: {
-        //        console.error(this, 'raw changed', raw)
         editer.defaultSource = raw
     }
     onBulletFocusChanged: {
@@ -38,6 +36,8 @@ FocusScope {
         visible: focus
         color: Qt.rgba(0, .5, .8, .3)
     }
+
+    signal textChanged();
 
     RowLayout {
         anchors.fill: parent // fill the parent item
@@ -66,10 +66,10 @@ FocusScope {
                         cur.collapsed = checked
                         docmodel.get(indexInList).cur = cur
                         if (checked) {
-                            for (var i = indexInList + 1; i <= end; i++)
+                            for (let i = indexInList + 1; i <= end; i++)
                                 docmodel.get(i).displayCollapsed++
                         } else {
-                            for (var i = indexInList + 1; i <= end; i++)
+                            for (let i = indexInList + 1; i <= end; i++)
                                 docmodel.get(i).displayCollapsed--
                         }
                         listview.forceLayout()
@@ -118,11 +118,10 @@ FocusScope {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 index: bullet.indexInList
+                onTextChanged: {
+                    bullet.textChanged();
+                }
             }
         }
-    }
-    Component.onCompleted: {
-
-        //        console.info(this, JSON.stringify(cur), JSON.stringify(childblocks))
     }
 }

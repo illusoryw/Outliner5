@@ -16,13 +16,13 @@ FocusScope {
         //        console.error(this, 'focus changed to', focus)
         if (focus)
             listview.currentIndex = index
-        else
-            saveToModel()
     }
     //    onIndexChanged:    console.error(this, 'index changed to', index)
     function moveCursor(pos) {
         srctext.cursorPosition = pos
     }
+
+    signal textChanged();
 
     TextEdit {
         id: srctext
@@ -110,6 +110,11 @@ FocusScope {
                 listview.startBulletEditing()
             }
         }
+
+        onTextChanged: {
+            saveToModel();
+            editer.textChanged();
+        }
     }
     Text {
         id: multitext
@@ -136,6 +141,8 @@ FocusScope {
         }
     }
     function saveToModel() {
-        docmodel.get(index).cur.raw = srctext.text
+        const cur = docmodel.get(index).cur;
+        cur.raw = srctext.text;
+        docmodel.setProperty(index, "cur", cur);
     }
 }
