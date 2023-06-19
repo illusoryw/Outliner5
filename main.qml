@@ -12,63 +12,107 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
-    title: qsTr("Hello World")
     property int lineHeight: 30
-    ScrollView {
-        id: view
-        anchors.fill: parent
-        Component.onCompleted: {
-            console.info(this, width, height, contentWidth, contentHeight)
+    ListModel {
+        id: docmodel
+        function getChildEnd(idx) {
+            let childEnd = idx, level = get(idx).cur.level
+            do {
+                childEnd++
+            } while (get(childEnd).cur.level > level)
+            return --childEnd
         }
+    }
+    Component.onCompleted: {
+        for (var i = 0; i < 1000; i++)
+            docmodel.append({
+                                "cur": {
+                                    "raw": `test bullet ${i}`,
+                                    "level": i % 2
+                                },
+                                "bulletFocus_": false
+                            })
+        console.error(JSON.stringify(docmodel))
+    }
 
-        Column {
-            width: parent.width
-            Repeater {
-                id: repeater
-                width: parent.width
-                model: 1000
-                Bullet {
-                    cur: {
-                        "raw": `level 1 no.${index}`
-                    }
-                    childblocks: []
-                    childComp: Component {
-                        Bullet {
-                            cur: _cur
-                            childblocks: _childblocks
-                            childComp: _childComp
-                        }
-                    }
-                    //                    KeyNavigation.down: nextItem //假设nextItem是下一个控件的id
-                    Keys.priority: Keys.BeforeItem
-                    Keys.onPressed: {
-                        console.error('key', event.key)
-                        if (event.key == Qt.Key_Down) {
-                            //使用moveCursorSelection方法来判断光标是否在最后一行
-                            let nextItem = repeater.itemAt(index + 1)
-                            nextItem.focus = true
-                            //                            nextItem.forceActiveFocus(0)
-                            console.error(index, nextItem)
-                            event.accepted = true
-                        } else if (event.key == Qt.Key_Up) {
-                            let nextItem = repeater.itemAt(index - 1)
-                            nextItem.focus = true
-                            console.error(index, nextItem)
-                            event.accepted = true
-                        } else if (event.key == Qt.Key_Enter
-                                   && (event.modifiers & Qt.ControlModifier)) {
-                            console.error('add node')
-                        } else if (event.key == Qt.Key_Tab) {
-                            console.error('indent')
-                        }
-                    }
-                }
-                Component.onCompleted: {
-                    console.info(this, parent, width, height)
-                }
+    //    ScrollView {
+    //        id: view
+    //        anchors.fill: parent
+    //        Component.onCompleted: {
+    //            console.info(this, width, height, contentWidth, contentHeight)
+    //        }
+    ListView {
+        anchors.fill: parent
+        //        Repeater {
+        id: listview
+        //            width: parent.width
+        model: docmodel
+        property bool bulletEditing: false
+        property int selectionBegin: count
+        property int selectionEnd: -1
+        function startBulletEditing() {
+            bulletEditing = true
+            selectCurrent()
+        }
+        function exitBulletEditing() {
+            for (var i = selectionBegin; i <= selectionEnd; i++)
+                docmodel.get(i).bulletFocus_ = false
+            console.error('exit bullet editing', selectionBegin, selectionEnd)
+            selectionEnd = -1
+            selectionBegin = count
+            bulletEditing = false
+            currentItem.forceFocus()
+        }
+        onCurrentIndexChanged: console.error('cur idx changed', currentIndex)
+        function selectCurrent(forward) {
+            let childEnd = docmodel.getChildEnd(
+                    currentIndex), level = currentItem.cur.level
+            console.error('select current=', currentIndex, childEnd,
+                          'level', level)
+            for (var i = currentIndex; i <= childEnd; i++)
+                docmodel.get(i).bulletFocus_ = true
+            if (forward) {
+                currentIndex = childEnd
             }
-            Component.onCompleted: {
-                console.info(this, width, height)
+            selectionBegin = Math.min(selectionBegin, currentIndex)
+            selectionEnd = Math.max(selectionEnd, childEnd)
+        }
+        delegate: Bullet {
+            required property var cur
+            required property bool bulletFocus_
+            required property int index
+            raw: cur.raw
+            level: cur.level
+            indexInList: index
+            bulletFocus: bulletFocus_
+        }
+        Component.onCompleted: {
+            console.info(this, parent, width, height)
+        }
+        Keys.priority: Keys.BeforeItem
+        Keys.onPressed: {
+            console.error('key', event.key, Qt.Key_Delete, 'modifier',
+                          event.modifiers, Qt.ShiftModifier)
+            if (!bulletEditing)
+                return
+            if (event.key === Qt.Key_Down) {
+                console.error('down select')
+                incrementCurrentIndex()
+                selectCurrent(true)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Up) {
+                console.error('up select')
+                decrementCurrentIndex()
+                selectCurrent(false)
+                event.accepted = true
+            } else if (event.key === Qt.Key_Escape) {
+                event.accepted = true
+                exitBulletEditing()
+            } else if (event.key === Qt.Key_Backspace) {
+                console.error('delete selection')
+                docmodel.remove(selectionBegin,
+                                selectionEnd - selectionBegin + 1)
+                exitBulletEditing()
             }
         }
     }
