@@ -164,7 +164,8 @@ Item {
                     console.log(JSON.stringify(content), level, collapsed)
                     docmodel.append({
                                         "cur": {
-                                            "raw": content,
+                                            "raw": content.substring(
+                                                       0, content.length - 2),
                                             "level": level,
                                             "collapsed": collapsed
                                         },
@@ -175,7 +176,7 @@ Item {
             }
 
             for (let idx in lines) {
-                const line = lines[idx] + '\n'
+                const line = lines[idx]
                 console.log('line', line)
 
                 const regex = /(\t*)([-+]) (.*)/
@@ -188,7 +189,7 @@ Item {
                     if (result1[1].length === level) {
                         console.log('same level')
                         if (result1[2].length) {
-                            content += result1[2]
+                            content += result1[2] + '\n'
                         } else {
                             content += "\n"
                         }
@@ -197,14 +198,14 @@ Item {
                         addNewBlock()
                         level = result1[1].length
                         collapsed = false
-                        content = result1[2]
+                        content = result1[2] + '\n'
                     }
                 } else {
                     console.log('new block')
                     addNewBlock()
                     level = result[1].length
                     collapsed = result[2] === "+"
-                    content = result[3]
+                    content = result[3] + '\n'
                 }
             }
             addNewBlock()
