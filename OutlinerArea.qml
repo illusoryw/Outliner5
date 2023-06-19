@@ -1,7 +1,7 @@
 import QtQuick 2.13
 
 Item {
-    id: root;
+    id: root
     ListModel {
         id: docmodel
         function getChildEnd(idx) {
@@ -13,7 +13,7 @@ Item {
         }
     }
     Component.onCompleted: {
-        clear();
+        clear()
     }
 
     ListView {
@@ -63,7 +63,7 @@ Item {
             visible: displayCollapsed === 0
             height: visible ? implicitHeight : 0
             onTextChanged: {
-                root.textChanged();
+                root.textChanged()
             }
         }
         Component.onCompleted: {
@@ -98,7 +98,7 @@ Item {
     }
 
     function clear() {
-        docmodel.clear();
+        docmodel.clear()
         docmodel.append({
                             "cur": {
                                 "raw": "",
@@ -107,70 +107,92 @@ Item {
                             },
                             "bulletFocus_": false,
                             "displayCollapsed": 0
-                        });
+                        })
     }
 
-    signal textChanged();
+    signal textChanged
 
     function getText() {
-        const result = [];
-        for (let i = 0; i < docmodel.count; ++i) {
-            const element = docmodel.get(i);
-            for (let j = 0; j < element.cur.level; ++j) {
-                result.push("\t");
+        const result = []
+        for (var i = 0; i < docmodel.count; ++i) {
+            const element = docmodel.get(i)
+            for (var j = 0; j < element.cur.level; ++j) {
+                result.push("\t")
             }
             if (element.displayCollapsed === 1) {
-                result.push("+ ");
+                result.push("+ ")
             } else {
-                result.push("- ");
+                result.push("- ")
             }
-            result.push(element.cur.raw);
-            result.push("\n");
+            result.push(element.cur.raw)
+            result.push("\n")
         }
-        return result.join("");
+        return result.join("")
     }
 
     function setText(value) {
-        const lines = value.replace("\r\n", "\n").split("\n");
+        const lines = value.replace("\r\n", "\n").split("\n")
+        console.log('lines', lines)
 
         if (lines.length === 0) {
-            clear();
+            clear()
         } else {
-            docmodel.clear();
-            for (let line of lines) {
-                if (line === "") continue;
-
-                const regex = /(\t*)([-+]) (.*)/;
-                const result = regex.exec(line);
-
-                let level, collapsed, content;
-                if (!result) {
-                    level = 0;
-                    collapsed = false;
-                    content = line;
-                } else {
-                    level = result[1].length;
-                    collapsed = result[2] === "+";
-                    content = result[3];
+            docmodel.clear()
+            let level = 0, collapsed = false, content = ''
+            const addNewBlock = () => {
+                if (content && content.length) {
+                    console.log(content, level, collapsed)
+                    docmodel.append({
+                                        "cur": {
+                                            "raw": content,
+                                            "level": level,
+                                            "collapsed": collapsed ? 1 : 0
+                                        },
+                                        "bulletFocus_": false,
+                                        "displayCollapsed": 0
+                                    })
                 }
-
-                docmodel.append({
-                                    "cur": {
-                                        "raw": content,
-                                        "level": level,
-                                        "collapsed": collapsed ? 1 : 0
-                                    },
-                                    "bulletFocus_": false,
-                                    "displayCollapsed": 0
-                                });
             }
 
-            for (let i = 0; i < docmodel.count; ++i) {
-                const element = docmodel.get(i);
-                if (element.cur.collapsed === 0) continue;
-                const end = docmodel.getChildEnd(i);
-                for (let j = i + 1; j <= end; ++j) {
-                    docmodel.setProperty(i, "displayCollapsed", element.displayCollapsed + 1);
+            for (let idx in lines) {
+                const line = lines[idx]
+                console.log('line', line)
+
+                const regex = /(\t*)([-+]) (.*)/
+                const result = regex.exec(line)
+
+                if (!result) {
+                    const regex1 = /(\t*)(.*)/
+                    let result1 = regex1.exec(line)
+                    if (result1 && result1[1].length === level
+                            && result1[2].length) {
+                        console.log('same level')
+                        content += '\n' + result1[2]
+                    } else {
+                        console.log('new block')
+                        addNewBlock()
+                        level = 0
+                        collapsed = false
+                        content = line
+                    }
+                } else {
+                    console.log('new block')
+                    addNewBlock()
+                    level = result[1].length
+                    collapsed = result[2] === "+"
+                    content = result[3]
+                }
+            }
+            addNewBlock()
+
+            for (var i = 0; i < docmodel.count; ++i) {
+                const element = docmodel.get(i)
+                if (element.cur.collapsed === 0)
+                    continue
+                const end = docmodel.getChildEnd(i)
+                for (var j = i + 1; j <= end; ++j) {
+                    docmodel.setProperty(i, "displayCollapsed",
+                                         element.displayCollapsed + 1)
                 }
             }
         }
