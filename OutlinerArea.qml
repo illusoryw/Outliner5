@@ -77,8 +77,8 @@ Item {
         Keys.onPressed: {
             console.error('key', event.key, Qt.Key_Delete, 'modifier',
                           event.modifiers, Qt.ShiftModifier)
-            if (event.key === Qt.Key_Backspace
-                    && event.modifiers === Qt.AltModifier) {
+            if (event.key === Qt.Key_R
+                    && event.modifiers === Qt.ControlModifier) {
                 displayBegin = 0
                 displayEnd = count
                 displayLevelBase = 0
