@@ -109,6 +109,9 @@ Item {
     }
 
     function clear() {
+        displayBegin = 0
+        displayEnd = count
+        displayLevelBase = 0
         docmodel.clear()
         docmodel.append({
                             "cur": {
@@ -155,6 +158,9 @@ Item {
         if (lines.length === 0) {
             clear()
         } else {
+            displayBegin = 0
+            displayEnd = count
+            displayLevelBase = 0
             docmodel.clear()
             let level = 0, collapsed = false, content = ''
             const addNewBlock = () => {
