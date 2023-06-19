@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+/*#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
 
@@ -18,6 +18,24 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    return app.exec();
+}
+*/
+#include <QtWidgets/QApplication>
+#include <QQmlApplicationEngine>
+#include "filerwriter.h"
+#include <QtQml>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+
+
+    QQmlApplicationEngine engine;
+    qmlRegisterType<FileRWritter>("com.mytexteditor.filerwritter", 1, 0, "FileRWritter");
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }
