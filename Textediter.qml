@@ -67,8 +67,12 @@ FocusScope {
                 }
             }
         }
-        Keys.onReturnPressed: {
-            if (event.modifiers === Qt.ControlModifier) {
+
+        Keys.onPressed: {
+            console.error('key', event.key, Qt.Key_Backspace, 'modifier',
+                          event.modifiers, Qt.ShiftModifier)
+            if (event.key === Qt.Key_Return
+                    && event.modifiers === Qt.ControlModifier) {
                 event.accepted = true
                 let next = (docmodel.get(index + 1) || docmodel.get(
                                 index)).cur.level
@@ -81,13 +85,7 @@ FocusScope {
                                 })
                 listview.currentIndex++
                 console.error('add node')
-            }
-        }
-
-        Keys.onPressed: {
-            console.error('key', event.key, Qt.Key_Backspace, 'modifier',
-                          event.modifiers, Qt.ShiftModifier)
-            if (event.key === Qt.Key_Backspace && atBegin) {
+            } else if (event.key === Qt.Key_Backspace && atBegin) {
                 event.accepted = true
                 saveToModel()
                 if (index <= 0)
@@ -105,7 +103,8 @@ FocusScope {
                     docmodel.remove(index)
                     listview.currentIndex--
                 }
-            } else if ((event.key === Qt.Key_Down || event.key === Qt.Key_Up)
+            } else if ((event.key === Qt.Key_Down && atEnd
+                        || event.key === Qt.Key_Up && atBegin)
                        && Qt.ShiftModifier === event.modifiers) {
                 event.accepted = true
                 listview.startBulletEditing()
