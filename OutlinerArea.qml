@@ -23,6 +23,9 @@ Item {
         property bool bulletEditing: false
         property int selectionBegin: count
         property int selectionEnd: -1
+        property int displayLevelBase: 0
+        property int displayBegin: 0
+        property int displayEnd: count
         function startBulletEditing() {
             bulletEditing = true
             selectCurrent()
@@ -56,11 +59,12 @@ Item {
             required property int index
             required property int displayCollapsed
             raw: cur.raw
-            level: cur.level
+            level: cur.level - listview.displayLevelBase
             collapsed: cur.collapsed || false
             indexInList: index
             bulletFocus: bulletFocus_
-            visible: displayCollapsed === 0
+            visible: displayCollapsed === 0 && index >= listview.displayBegin
+                     && index < listview.displayEnd
             height: visible ? implicitHeight : 0
             onTextChanged: {
                 root.textChanged()
@@ -73,6 +77,13 @@ Item {
         Keys.onPressed: {
             console.error('key', event.key, Qt.Key_Delete, 'modifier',
                           event.modifiers, Qt.ShiftModifier)
+            if (event.key === Qt.Key_Backspace
+                    && event.modifiers === Qt.AltModifier) {
+                displayBegin = 0
+                displayEnd = count
+                displayLevelBase = 0
+            }
+
             if (!bulletEditing)
                 return
             if (event.key === Qt.Key_Down) {

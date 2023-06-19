@@ -83,6 +83,17 @@ FocusScope {
                 HoverHandler {
                     id: dothoverhdlr
                 }
+                TapHandler {
+                    onTapped: {
+                        console.error('enter bullet', this, indexInList)
+                        listview.displayBegin = indexInList
+                        listview.displayEnd = docmodel.getChildEnd(
+                                    indexInList) + 1
+                        listview.displayLevelBase = level
+                        listview.currentIndex = indexInList
+                        editer.forceActiveFocus()
+                    }
+                }
 
                 Rectangle {
                     width: 16

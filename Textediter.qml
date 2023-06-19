@@ -85,7 +85,8 @@ FocusScope {
                                 })
                 listview.currentIndex++
                 console.error('add node')
-            } else if (event.key === Qt.Key_Backspace && atBegin) {
+            } else if (event.key === Qt.Key_Backspace && event.modifiers === 0
+                       && atBegin) {
                 event.accepted = true
                 saveToModel()
                 if (index <= 0)
