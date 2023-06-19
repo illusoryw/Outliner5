@@ -120,7 +120,7 @@ Item {
                 result.push("\t")
             }
             if (element.cur.collapsed) {
-                result.push("+ ");
+                result.push("+ ")
             } else {
                 result.push("- ")
             }
@@ -140,7 +140,7 @@ Item {
             docmodel.clear()
             let level = 0, collapsed = false, content = ''
             const addNewBlock = () => {
-                if (content && content.length) {
+                if (content && content.replace('\n', '').length) {
                     console.log(content, level, collapsed)
                     docmodel.append({
                                         "cur": {
@@ -155,7 +155,7 @@ Item {
             }
 
             for (let idx in lines) {
-                const line = lines[idx]
+                const line = lines[idx] + '\n'
                 console.log('line', line)
 
                 const regex = /(\t*)([-+]) (.*)/
@@ -167,7 +167,7 @@ Item {
                     if (result1 && result1[1].length === level
                             && result1[2].length) {
                         console.log('same level')
-                        content += '\n' + result1[2]
+                        content += result1[2]
                     } else {
                         console.log('new block')
                         addNewBlock()
