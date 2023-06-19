@@ -128,13 +128,19 @@ Item {
 
     function getText() {
         const result = []
-        for (var i = 0; i < docmodel.count; ++i) {
+        for (let i = 0; i < docmodel.count; ++i) {
             const element = docmodel.get(i)
             const lines = element.cur.raw.replace("\r\n", "\n").split("\n");
             for (let idx = 0; idx < lines.length; ++idx) {
                 const line = lines[idx];
-                for (var j = 0; j < element.cur.level; ++j) {
-                    result.push("\t")
+                if (idx >= 1) {
+                    for (let j = 0; j < element.cur.level; ++j) {
+                        result.push("\t");
+                    }
+                    result.push("\n");
+                }
+                for (let j = 0; j < element.cur.level; ++j) {
+                    result.push("\t");
                 }
                 console.log(idx);
                 if (idx === 0) {
