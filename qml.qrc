@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>OutlinerArea.qml</file>
+        <file>Bullet.qml</file>
+        <file>Textediter.qml</file>
     </qresource>
 </RCC>

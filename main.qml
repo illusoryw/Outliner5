@@ -14,6 +14,7 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
+    property int lineHeight: 30
     id:mainwindowid;
     property string filepath: "";
     property string filename: "";
@@ -317,7 +318,7 @@ menuBar: MenuBar {
 
 //}
 // 定义纯文本编辑框
-TextArea {
+OutlinerArea {
     id: textareaid
     width: folderOpened?parent.width - folderTreeView.width:parent.width;
     height: parent.height
@@ -378,7 +379,7 @@ function openVisited(){
     //var  filename = openfileDialog.fileUrl;
     filerwritterid.m_fileName = filename;
     var filedata = filerwritterid.readFile();
-    textareaid.text = filedata;
+    textareaid.setText(filedata);
     mainwindowid.filepath = filename;
     //var tmp=mainwindowid.filepath.lastIndexOf('/');
     mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
@@ -403,8 +404,7 @@ function aboutapp()
 
 function clearTextArea()
 {
-  // TODO
-    console.log("TODO");
+    textareaid.clear();
 }
 
 function newFile()
@@ -415,7 +415,7 @@ function newFile()
  //  }
   // else
     if(textareaid.saved==false)
-    //&& textareaid.text.length > 0)
+    //&& textareaid.getText().length > 0)
    {
        messageDialog.open();
    }
@@ -439,7 +439,7 @@ function saveFile()
    else
    {
        filerwritterid.m_fileName = mainwindowid.filepath;
-       filerwritterid.saveFile(textareaid.text);
+       filerwritterid.saveFile(textareaid.getText());
    }
    textareaid.saved = true;
 
@@ -458,7 +458,7 @@ MessageDialog {
     standardButtons:StandardButton.Yes|StandardButton.No|StandardButton.Cancel
     onYes:  {//保存已打开文件
         filerwritterid.m_fileName = mainwindowid.filepath;
-        filerwritterid.saveFile(textareaid.text);
+        filerwritterid.saveFile(textareaid.getText());
         textareaid.saved = true;
         //openfileDialog.open()
         openVisited();
@@ -471,7 +471,7 @@ MessageDialog {
 //        //var  filename = openfileDialog.fileUrl;
 //        filerwritterid.m_fileName = filename;
 //        var filedata = filerwritterid.readFile();
-//        textareaid.text = filedata;
+//        textareaid.setText(filedata);
 //        mainwindowid.filepath = filename;
 //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
 //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
@@ -497,7 +497,7 @@ MessageDialog {
 //        //var  filename = openfileDialog.fileUrl;
 //        filerwritterid.m_fileName = filename;
 //        var filedata = filerwritterid.readFile();
-//        textareaid.text = filedata;
+//        textareaid.setText(filedata);
 //        mainwindowid.filepath = filename;
 //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
 //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
@@ -532,7 +532,7 @@ MessageDialog {
     standardButtons:StandardButton.Yes|StandardButton.No|StandardButton.Cancel
     onYes:  {//保存已打开文件
         filerwritterid.m_fileName = mainwindowid.filepath;
-        filerwritterid.saveFile(textareaid.text);
+        filerwritterid.saveFile(textareaid.getText());
         textareaid.saved = true;
         openfileDialog.open()
     }
@@ -556,7 +556,7 @@ MessageDialog {
     standardButtons:StandardButton.Yes|StandardButton.No|StandardButton.Cancel
     onYes:  {
             filerwritterid.m_fileName = mainwindowid.filepath;
-            filerwritterid.saveFile(textareaid.text);
+            filerwritterid.saveFile(textareaid.getText());
             textareaid.saved = true;
             fileDialogsaveanother.open()
         }
@@ -581,7 +581,7 @@ MessageDialog {
     standardButtons:StandardButton.Yes|StandardButton.No|StandardButton.Cancel
     onYes:  {
             filerwritterid.m_fileName = mainwindowid.filepath;
-            filerwritterid.saveFile(textareaid.text);
+            filerwritterid.saveFile(textareaid.getText());
             textareaid.saved = true;
             mainwindowid.filepath="";
             mainwindowid.filename="";
@@ -612,7 +612,7 @@ MessageDialog {
     standardButtons:StandardButton.Yes|StandardButton.No|StandardButton.Cancel
     onYes:  {
         filerwritterid.m_fileName = mainwindowid.filepath;
-        filerwritterid.saveFile(textareaid.text);
+        filerwritterid.saveFile(textareaid.getText());
         textareaid.saved = true;
         fileDialog.open();
 
@@ -651,7 +651,7 @@ FileDialog {
         var  filename = openfileDialog.fileUrl;
         filerwritterid.m_fileName = filename;
         var filedata = filerwritterid.readFile();
-        textareaid.text = filedata;
+        textareaid.setText(filedata);
         mainwindowid.filepath = filename;
         //var tmp=mainwindowid.filepath.lastIndexOf('/');
         mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
@@ -677,7 +677,7 @@ FileDialog {
         else{fileOpened=true;}
         var  filename = fileDialog.fileUrl;
         filerwritterid.m_fileName = filename;
-        filerwritterid.saveFile(textareaid.text);
+        filerwritterid.saveFile(textareaid.getText());
         mainwindowid.filepath = filename;
         var tmp=mainwindowid.filepath.lastIndexOf('/');
         mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
@@ -697,7 +697,7 @@ FileDialog {
     onAccepted: {
         var  filename = fileDialogsaveanother.fileUrl;
         filerwritterid.m_fileName = filename;
-        filerwritterid.saveFile(textareaid.text);
+        filerwritterid.saveFile(textareaid.getText());
         mainwindowid.filepath = filename;
         var tmp=mainwindowid.filepath.lastIndexOf('/');
         mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
