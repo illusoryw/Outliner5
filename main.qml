@@ -19,18 +19,19 @@ ApplicationWindow {
             let childEnd = idx, level = get(idx).cur.level
             do {
                 childEnd++
-            } while (get(childEnd).cur.level > level)
+            } while (get(childEnd) && get(childEnd).cur.level > level)
             return --childEnd
         }
     }
     Component.onCompleted: {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < 100; i++)
             docmodel.append({
                                 "cur": {
                                     "raw": `test bullet ${i}`,
-                                    "level": i % 2
+                                    "level": i % 5
                                 },
-                                "bulletFocus_": false
+                                "bulletFocus_": false,
+                                "displayCollapsed": 0
                             })
         console.error(JSON.stringify(docmodel))
     }
@@ -81,10 +82,14 @@ ApplicationWindow {
             required property var cur
             required property bool bulletFocus_
             required property int index
+            required property int displayCollapsed
             raw: cur.raw
             level: cur.level
+            collapsed: cur.collapsed || false
             indexInList: index
             bulletFocus: bulletFocus_
+            visible: displayCollapsed === 0
+            height: visible ? implicitHeight : 0
         }
         Component.onCompleted: {
             console.info(this, parent, width, height)
@@ -493,19 +498,6 @@ ApplicationWindow {
 
     //}
     // 定义纯文本编辑框
-    TextArea {
-        id: textareaid
-        width: folderOpened ? parent.width - folderTreeView.width : parent.width
-        height: parent.height
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        property bool saved: false
-        onCursorPositionChanged: setStatusBarState()
-        onTextChanged: saved = false
-        visible: fileOpened
-    }
-
     statusBar: StatusBar {
         id: statusbarid
         visible: false
@@ -782,23 +774,6 @@ ApplicationWindow {
             // Qt.quit()
         }
         //Component.onCompleted: visible = true
-    }
-
-    FontDialog {
-        id: fontDialog
-        title: "Please choose a font"
-        font: Qt.font({
-                          "family": "Arial",
-                          "pointSize": 24,
-                          "weight": Font.Normal
-                      })
-        onAccepted: {
-            setTextFont()
-        }
-        onRejected: {
-            console.log("Canceled")
-            //  Qt.quit()
-        }
     }
 
     MessageDialog {

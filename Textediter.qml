@@ -19,10 +19,7 @@ FocusScope {
         else
             saveToModel()
     }
-    onIndexChanged: {
-
-        //        console.error(this, 'index changed to', index)
-    }
+    //    onIndexChanged:    console.error(this, 'index changed to', index)
     function moveCursor(pos) {
         srctext.cursorPosition = pos
     }
@@ -58,7 +55,8 @@ FocusScope {
         }
         Keys.onTabPressed: {
             event.accepted = true
-            let prevlevel = docmodel.get(index - 1).cur.level
+            let prevlevel = (docmodel.get(index - 1) || docmodel.get(
+                                 index)).cur.level
             console.error('key tab,index=', index, prevlevel, level)
             if (level - prevlevel <= 0) {
                 for (var i = index, end = docmodel.getChildEnd(
@@ -72,7 +70,8 @@ FocusScope {
         Keys.onReturnPressed: {
             if (event.modifiers === Qt.ControlModifier) {
                 event.accepted = true
-                let next = docmodel.get(index + 1).cur.level
+                let next = (docmodel.get(index + 1) || docmodel.get(
+                                index)).cur.level
                 docmodel.insert(index + 1, {
                                     "cur": {
                                         "level": next <= level ? level : level + 1,
@@ -91,9 +90,11 @@ FocusScope {
             if (event.key === Qt.Key_Backspace && atBegin) {
                 event.accepted = true
                 saveToModel()
-                let previdx = index - 1, nextidx = index + 1
+                if (index <= 0)
+                    return
+                let previdx = index - 1
                 let prev = docmodel.get(previdx).cur
-                let next = docmodel.get(nextidx).cur
+                let next = (docmodel.get(index + 1) || docmodel.get(index)).cur
                 console.error('back and begin', index, prev.level, level)
                 if (prev.level <= level && next.level <= level) {
                     let prevlen = prev.raw.length

@@ -8,8 +8,7 @@ FocusScope {
     width: window.width
     implicitHeight: nodes.height // bind bullet height to editor height
     property string raw: ''
-    //    property var childblocks: []
-    //    property var childComp: null
+    property bool collapsed: false
     property var nextItem: this
     property alias atEnd: editer.atEnd
     property alias atBegin: editer.atBegin
@@ -44,16 +43,69 @@ FocusScope {
         anchors.fill: parent // fill the parent item
         anchors.leftMargin: level * lineHeight
         spacing: 10 // some spacing between dotRect and editor
+        Row {
+            Item {
+                // fold triangle
+                width: height * 0.8
+                height: lineHeight
+                HoverHandler {
+                    id: hoverhdlr
+                }
+                Button {
+                    anchors.fill: parent
+                    text: checked ? '▶' : '▼'
+                    checkable: true
+                    background: Item {}
+                    font.pixelSize: 8
+                    anchors.centerIn: parent
+                    visible: hoverhdlr.hovered
+                    Component.onCompleted: console.error('button', width)
+                    onCheckedChanged: {
+                        let end = docmodel.getChildEnd(indexInList)
+                        let cur = docmodel.get(indexInList).cur
+                        cur.collapsed = checked
+                        docmodel.get(indexInList).cur = cur
+                        if (checked) {
+                            for (var i = indexInList + 1; i <= end; i++)
+                                docmodel.get(i).displayCollapsed++
+                        } else {
+                            for (var i = indexInList + 1; i <= end; i++)
+                                docmodel.get(i).displayCollapsed--
+                        }
+                        listview.forceLayout()
+                    }
+                }
+            }
+            Item {
+                // dot rect
+                width: height * 0.3
+                height: lineHeight
+                HoverHandler {
+                    id: dothoverhdlr
+                }
 
-        Item {
-            width: height
-            height: lineHeight
-            Rectangle {
-                width: 6
-                height: width
-                radius: width / 2
-                color: "lightGray"
-                anchors.centerIn: parent
+                Rectangle {
+                    width: 16
+                    height: width
+                    radius: width / 2
+                    color: Qt.rgba(0, 0, 0, .05)
+                    visible: dothoverhdlr.hovered || collapsed
+                    anchors.centerIn: parent
+                }
+                Rectangle {
+                    width: dothoverhdlr.hovered ? 8 : 6
+                    height: width
+                    radius: width / 2
+                    color: dothoverhdlr.hovered ? "lightslategray" : "lightGray"
+                    anchors.centerIn: parent
+
+                    Behavior on width {
+                        NumberAnimation {
+                            duration: 300
+                            easing.type: Easing.OutExpo
+                        }
+                    }
+                }
             }
             Layout.alignment: Qt.AlignTop
         }
@@ -67,23 +119,6 @@ FocusScope {
                 anchors.right: parent.right
                 index: bullet.indexInList
             }
-            //            Repeater {
-            //                model: childblocks
-            //                Loader {
-            //                    sourceComponent: childComp
-            //                    property var _cur: modelData.cur
-            //                    property var _childblocks: modelData.childblocks
-            //                    property var _childComp: childComp
-            //                    Component.onCompleted: {
-
-            //                        //                        console.info(this, JSON.stringify(modelData))
-            //                    }
-            //                }
-            //                Component.onCompleted: {
-
-            //                    //                    console.info(this, JSON.stringify(childblocks))
-            //                }
-            //            }
         }
     }
     Component.onCompleted: {
