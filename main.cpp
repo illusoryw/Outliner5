@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-
+    app.setOrganizationName("WHUCS-HY-SE5");
+    app.setOrganizationDomain("cn.edu.whu.cs");
 
     QQmlApplicationEngine engine;
     qmlRegisterType<FileRWritter>("com.mytexteditor.filerwritter", 1, 0, "FileRWritter");
