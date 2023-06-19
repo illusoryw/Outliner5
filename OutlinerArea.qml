@@ -54,10 +54,6 @@ Item {
             selectionEnd = Math.max(selectionEnd, childEnd)
         }
         delegate: Bullet {
-            required property var cur
-            required property bool bulletFocus_
-            required property int index
-            required property int displayCollapsed
             raw: cur.raw
             level: cur.level - listview.displayLevelBase
             collapsed: cur.collapsed || false
