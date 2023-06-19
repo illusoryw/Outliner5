@@ -109,9 +109,6 @@ Item {
     }
 
     function clear() {
-        displayBegin = 0
-        displayEnd = count
-        displayLevelBase = 0
         docmodel.clear()
         docmodel.append({
                             "cur": {
@@ -128,21 +125,21 @@ Item {
 
     function getText() {
         const result = []
-        for (let i = 0; i < docmodel.count; ++i) {
+        for (var i = 0; i < docmodel.count; ++i) {
             const element = docmodel.get(i)
-            const lines = element.cur.raw.replace("\r\n", "\n").split("\n");
-            for (let idx = 0; idx < lines.length; ++idx) {
-                const line = lines[idx];
+            const lines = element.cur.raw.replace("\r\n", "\n").split("\n")
+            for (var idx = 0; idx < lines.length; ++idx) {
+                const line = lines[idx]
                 if (idx >= 1) {
-                    for (let j = 0; j < element.cur.level; ++j) {
-                        result.push("\t");
+                    for (var j = 0; j < element.cur.level; ++j) {
+                        result.push("\t")
                     }
-                    result.push("\n");
+                    result.push("\n")
                 }
-                for (let j = 0; j < element.cur.level; ++j) {
-                    result.push("\t");
+                for (var j = 0; j < element.cur.level; ++j) {
+                    result.push("\t")
                 }
-                console.log(idx);
+                console.log(idx)
                 if (idx === 0) {
                     if (element.cur.collapsed) {
                         result.push("+ ")
@@ -150,8 +147,8 @@ Item {
                         result.push("- ")
                     }
                 }
-                result.push(line);
-                result.push("\n");
+                result.push(line)
+                result.push("\n")
             }
         }
         return result.join("")
@@ -164,14 +161,11 @@ Item {
         if (lines.length === 0) {
             clear()
         } else {
-            displayBegin = 0
-            displayEnd = count
-            displayLevelBase = 0
             docmodel.clear()
             let level = 0, collapsed = false, content = ''
             const addNewBlock = () => {
                 if (content && content.replace('\n', '').length) {
-                    console.log(content, level, collapsed)
+                    console.log(JSON.stringify(content), level, collapsed)
                     docmodel.append({
                                         "cur": {
                                             "raw": content,
@@ -194,8 +188,8 @@ Item {
                 if (!result) {
                     const regex1 = /(\t*)(.*)/
                     let result1 = regex1.exec(line)
-                    if (result1 && result1[1].length === level
-                            && result1[2].length) {
+                    console.log(JSON.stringify(result1))
+                    if (result1[1].length === level && result1[2].length) {
                         console.log('same level')
                         content += result1[2]
                     } else {
@@ -203,7 +197,7 @@ Item {
                         addNewBlock()
                         level = 0
                         collapsed = false
-                        content = line
+                        content = result1[2]
                     }
                 } else {
                     console.log('new block')
