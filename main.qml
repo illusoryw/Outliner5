@@ -22,17 +22,31 @@ ApplicationWindow {
             } while (get(childEnd) && get(childEnd).cur.level > level)
             return --childEnd
         }
+        onCountChanged: reset()
+        function reset() {
+            if (count === 0) {
+                append({
+                           "cur": {
+                               "raw": '',
+                               "level": 0
+                           },
+                           "bulletFocus_": false,
+                           "displayCollapsed": 0
+                       })
+            }
+        }
     }
     Component.onCompleted: {
-        for (var i = 0; i < 100; i++)
-            docmodel.append({
-                                "cur": {
-                                    "raw": `test bullet ${i}`,
-                                    "level": i % 5
-                                },
-                                "bulletFocus_": false,
-                                "displayCollapsed": 0
-                            })
+        //        for (var i = 0; i < 100; i++)
+        //            docmodel.append({
+        //                                "cur": {
+        //                                    "raw": `test bullet ${i}`,
+        //                                    "level": i % 5
+        //                                },
+        //                                "bulletFocus_": false,
+        //                                "displayCollapsed": 0
+        //                            })
+        docmodel.reset()
         console.error(JSON.stringify(docmodel))
     }
 
