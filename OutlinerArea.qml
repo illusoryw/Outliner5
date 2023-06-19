@@ -127,16 +127,23 @@ Item {
         const result = []
         for (var i = 0; i < docmodel.count; ++i) {
             const element = docmodel.get(i)
-            for (var j = 0; j < element.cur.level; ++j) {
-                result.push("\t")
+            const lines = element.cur.raw.replace("\r\n", "\n").split("\n");
+            for (let idx = 0; idx < lines.length; ++idx) {
+                const line = lines[idx];
+                for (var j = 0; j < element.cur.level; ++j) {
+                    result.push("\t")
+                }
+                console.log(idx);
+                if (idx === 0) {
+                    if (element.cur.collapsed) {
+                        result.push("+ ")
+                    } else {
+                        result.push("- ")
+                    }
+                }
+                result.push(line);
+                result.push("\n");
             }
-            if (element.cur.collapsed) {
-                result.push("+ ")
-            } else {
-                result.push("- ")
-            }
-            result.push(element.cur.raw)
-            result.push("\n")
         }
         return result.join("")
     }
