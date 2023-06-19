@@ -218,18 +218,6 @@ menuBar: MenuBar {
             shortcut: "Ctrl+V"
              onTriggered: if(fileOpened){textareaid.paste();}
         }
-        MenuItem {
-            text: qsTr("删除")
-            shortcut: "Del"
-             onTriggered:if(fileOpened){ textareaid.remove(textareaid.selectionStart,textareaid.selectionEnd);}
-        }
-        MenuSeparator{}
-        MenuItem {
-            text: qsTr("全选")
-            shortcut: "Ctrl+A";
-            onTriggered: if(fileOpened){textareaid.selectAll();}
-
-        }
     }
     Menu {
         title: qsTr("关于(&V)")
@@ -415,8 +403,8 @@ function aboutapp()
 
 function clearTextArea()
 {
-  textareaid.selectAll();
-     textareaid.remove(0,textareaid.cursorPosition);
+  // TODO
+    console.log("TODO");
 }
 
 function newFile()
