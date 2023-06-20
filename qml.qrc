@@ -5,5 +5,6 @@
         <file>Bullet.qml</file>
         <file>Textediter.qml</file>
         <file>Manual.md</file>
+        <file>assets/1.png</file>
     </qresource>
 </RCC>

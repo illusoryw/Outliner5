@@ -30,6 +30,29 @@ FocusScope {
         console.error(this, indexInList, 'bullet focus changed to', bulletFocus)
         background.focus = bulletFocus
     }
+    Component.onCompleted: {
+        btn.checked = collapsed
+        collapsed = Qt.binding(function () {
+            return btn.checked
+        })
+    }
+    onCollapsedChanged: {
+        let end = docmodel.getChildEnd(indexInList)
+        let cur = docmodel.get(indexInList).cur
+        docmodel.get(indexInList).cur = cur
+        if (collapsed) {
+            for (var i = indexInList + 1; i <= end; i++) {
+                docmodel.get(i).displayCollapsed++
+                console.error('fold', i, docmodel.get(i).displayCollapsed)
+            }
+        } else {
+            for (var i = indexInList + 1; i <= end; i++) {
+                docmodel.get(i).displayCollapsed--
+                console.error('unfold', i, docmodel.get(i).displayCollapsed)
+            }
+        }
+        listview.forceLayout()
+    }
     Rectangle {
         id: background
         anchors.fill: parent
@@ -37,7 +60,7 @@ FocusScope {
         color: Qt.rgba(0, .5, .8, .3)
     }
 
-    signal textChanged();
+    signal textChanged
 
     RowLayout {
         anchors.fill: parent // fill the parent item
@@ -52,28 +75,15 @@ FocusScope {
                     id: hoverhdlr
                 }
                 Button {
+                    id: btn
                     anchors.fill: parent
                     text: checked ? '▶' : '▼'
                     checkable: true
+                    checked: initChecked()
                     background: Item {}
                     font.pixelSize: 8
                     anchors.centerIn: parent
                     visible: hoverhdlr.hovered
-                    Component.onCompleted: checked = collapsed
-                    onCheckedChanged: {
-                        let end = docmodel.getChildEnd(indexInList)
-                        let cur = docmodel.get(indexInList).cur
-                        cur.collapsed = checked
-                        docmodel.get(indexInList).cur = cur
-                        if (checked) {
-                            for (let i = indexInList + 1; i <= end; i++)
-                                docmodel.get(i).displayCollapsed++
-                        } else {
-                            for (let i = indexInList + 1; i <= end; i++)
-                                docmodel.get(i).displayCollapsed--
-                        }
-                        listview.forceLayout()
-                    }
                 }
             }
             Item {
@@ -130,7 +140,7 @@ FocusScope {
                 anchors.right: parent.right
                 index: bullet.indexInList
                 onTextChanged: {
-                    bullet.textChanged();
+                    bullet.textChanged()
                 }
             }
         }
