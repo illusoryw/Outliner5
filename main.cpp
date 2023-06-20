@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     qmlRegisterType<FileRWritter>("com.mytexteditor.filerwritter", 1, 0, "FileRWritter");
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.rootContext()->setContextProperty("CurDirPath", QUrl(QDir::currentPath()));
 
     return app.exec();
 }

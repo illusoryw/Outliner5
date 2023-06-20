@@ -42,7 +42,7 @@ Item {
         onCurrentIndexChanged: console.error('cur idx changed', currentIndex)
         function selectCurrent(forward) {
             let childEnd = docmodel.getChildEnd(
-                    currentIndex), level = currentItem.cur.level
+                    currentIndex), level = currentItem.level
             console.error('select current=', currentIndex, childEnd,
                           'level', level)
             for (var i = currentIndex; i <= childEnd; i++)
@@ -126,12 +126,12 @@ Item {
             const lines = element.cur.raw.replace("\r\n", "\n").split("\n")
             for (var idx = 0; idx < lines.length; ++idx) {
                 const line = lines[idx]
-                if (idx >= 1) {
-                    for (var j = 0; j < element.cur.level; ++j) {
-                        result.push("\t")
-                    }
-                    result.push("\n")
-                }
+                //                if (idx >= 1) {
+                //                    for (var j = 0; j < element.cur.level; ++j) {
+                //                        result.push("\t")
+                //                    }
+                //                    result.push("\n")
+                //                }
                 for (var j = 0; j < element.cur.level; ++j) {
                     result.push("\t")
                 }
@@ -165,7 +165,7 @@ Item {
                     docmodel.append({
                                         "cur": {
                                             "raw": content.substring(
-                                                       0, content.length - 2),
+                                                       0, content.length - 1),
                                             "level": level,
                                             "collapsed": collapsed
                                         },

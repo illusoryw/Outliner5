@@ -22,7 +22,7 @@ FocusScope {
         srctext.cursorPosition = pos
     }
 
-    signal textChanged();
+    signal textChanged
 
     TextEdit {
         id: srctext
@@ -113,8 +113,8 @@ FocusScope {
         }
 
         onTextChanged: {
-            saveToModel();
-            editer.textChanged();
+            saveToModel()
+            editer.textChanged()
         }
     }
     Text {
@@ -123,6 +123,7 @@ FocusScope {
         anchors.right: parent.right
         text: markdown_sourse
         font.pixelSize: 20
+        baseUrl: mainwindowid.filepath
         textFormat: Text.MarkdownText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         visible: !editer.focus
@@ -142,9 +143,9 @@ FocusScope {
         }
     }
     function saveToModel() {
-        const element = docmodel.get(index);
-        const cur = element.cur;
-        cur.raw = srctext.text;
-        element.cur = cur;
+        const element = docmodel.get(index)
+        const cur = element.cur
+        cur.raw = srctext.text
+        element.cur = cur
     }
 }
