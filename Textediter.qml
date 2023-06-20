@@ -3,6 +3,12 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 
+/**************************************************
+  Markdown 编辑控件：当焦点在控件上时，展示 Markdown 源
+  代码，并支持编辑；当焦点不在控件上时，展示 Markdown 渲染
+  结果。
+**************************************************/
+
 FocusScope {
     id: editer
     property string markdown_sourse: srctext.text
@@ -13,11 +19,12 @@ FocusScope {
     implicitWidth: focus ? srctext.width : multitext.width
     implicitHeight: focus ? srctext.height : multitext.height
     onFocusChanged: {
-        //        console.error(this, 'focus changed to', focus)
+        // 当焦点改变时，触发此处代码
         if (focus)
             listview.currentIndex = index
     }
-    //    onIndexChanged:    console.error(this, 'index changed to', index)
+
+    // 移动光标
     function moveCursor(pos) {
         srctext.cursorPosition = pos
     }
@@ -34,6 +41,7 @@ FocusScope {
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         selectByMouse: true
         onCursorPositionChanged: {
+            // 光标位置改变事件
             console.error('cursor pos changed', cursorPosition)
             if (cursorPosition == text.length)
                 console.error('cursor at end', cursorPosition, text.length)
@@ -42,6 +50,7 @@ FocusScope {
         }
         Keys.priority: Keys.BeforeItem
         Keys.onBacktabPressed: {
+            // 减少缩进
             event.accepted = true
             console.error('key backtab,index=', index, level)
             if (level <= 0)
@@ -54,6 +63,7 @@ FocusScope {
             }
         }
         Keys.onTabPressed: {
+            // 增加缩进
             event.accepted = true
             let prevlevel = (docmodel.get(index - 1) || docmodel.get(
                                  index)).cur.level
@@ -73,6 +83,7 @@ FocusScope {
                           event.modifiers, Qt.ShiftModifier)
             if (event.key === Qt.Key_Return
                     && event.modifiers === Qt.ControlModifier) {
+                // Ctrl+Enter，添加一个节点
                 event.accepted = true
                 let next = (docmodel.get(index + 1) || docmodel.get(
                                 index)).cur.level
@@ -82,7 +93,7 @@ FocusScope {
                                         "raw": ''
                                     },
                                     "bulletFocus_": false
-                                })
+                                })  // 插入一个新的节点到 docmodel
                 listview.currentIndex++
                 console.error('add node')
             } else if (event.key === Qt.Key_Backspace && event.modifiers === 0
@@ -113,11 +124,12 @@ FocusScope {
         }
 
         onTextChanged: {
-            saveToModel()
+            saveToModel()  // 一旦用户改变了内容，立即写回 docmodel
             editer.textChanged()
         }
     }
     Text {
+        // 展示渲染后的 Markdown 内容
         id: multitext
         anchors.left: parent.left
         anchors.right: parent.right
@@ -132,16 +144,16 @@ FocusScope {
         anchors.fill: parent
         propagateComposedEvents: true
         onClicked: {
-            //editer.forceActiveFocus();
             srctext.forceActiveFocus()
             mouse.accepted = true
-            //srctext.focus=true;
         }
         onPressed: {
             srctext.forceActiveFocus()
             mouse.accepted = false
         }
     }
+
+    // 将用户修改的内容写回 docmodel，便于用户选择保存时读取内容
     function saveToModel() {
         const element = docmodel.get(index)
         const cur = element.cur

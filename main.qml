@@ -7,6 +7,10 @@ import QtQuick.Controls.Styles 1.4
 import com.mytexteditor.filerwritter 1.0
 import Qt.labs.folderlistmodel 2.1
 
+/**************************************************
+  主界面：用于展示编辑界面，同时包含打开、保存等功能的菜单
+**************************************************/
+
 ApplicationWindow {
     //title: qsTr("TextEditor")
     title: (filename == "") ? "outliner5" : filename + " -outliner5"
@@ -97,6 +101,7 @@ ApplicationWindow {
                              }
             }
             Menu {
+                // 最近打开文件，以下每一个 MenuItem 对应每一项
                 title: qsTr("最近打开文件")
                 MenuItem {
                     text: qsTr(mainwindowid.visited1 == "" ? "无" : mainwindowid.visited1)
@@ -282,7 +287,8 @@ ApplicationWindow {
     //        }
 
     //}
-    // 定义纯文本编辑框
+
+    // 定义大纲编辑框
     OutlinerArea {
         id: textareaid
         width: folderOpened ? parent.width - folderTreeView.width : parent.width
@@ -295,6 +301,7 @@ ApplicationWindow {
         visible: fileOpened
     }
 
+    // 用于设置新的最近打开文件
     function changevisited(currentfilename) {
         var index = 0
         if (currentfilename === visited1)
@@ -328,6 +335,8 @@ ApplicationWindow {
             mainwindowid.visited1 = currentfilename
         }
     }
+
+    // 打开最近打开文件
     function openVisited() {
         var filename = ""
         if (mainwindowid.clickvisited1 == true)
@@ -356,6 +365,8 @@ ApplicationWindow {
         mainwindowid.clickvisited4 = false
         mainwindowid.clickvisited5 = false
     }
+
+    // 打开文件菜单项
     function openFile() {
         messageDialogopen.open()
     }
@@ -369,12 +380,7 @@ ApplicationWindow {
     }
 
     function newFile() {
-        // if(textareaid.saved)
-        //  {
-        //    clearTextArea();
-        //  }
-        // else
-        if (textareaid.saved == false) //&& textareaid.getText().length > 0)
+        if (textareaid.saved == false)
         {
             messageDialog.open()
         } else {
@@ -382,11 +388,9 @@ ApplicationWindow {
             mainwindowid.filepath = ""
             mainwindowid.filename = ""
         }
-
-        //  clearTextArea();
-        //   mainwindowid.filepath="";
     }
 
+    // 保存文件菜单项
     function saveFile() {
         if (mainwindowid.filepath.length == 0) //由于使用了fileOpened，所以这里可以省去
         {
@@ -398,6 +402,7 @@ ApplicationWindow {
         textareaid.saved = true
     }
 
+    // 另存为菜单项
     function saveanotherFile() {
         fileDialogsaveanother.open()
     }
@@ -415,52 +420,9 @@ ApplicationWindow {
             textareaid.saved = true
             //openfileDialog.open()
             openVisited()
-            //        var filename="";
-            //        if(mainwindowid.clickvisited1==true) filename=mainwindowid.visited1;
-            //        else if(mainwindowid.clickvisited2==true) filename=mainwindowid.visited2;
-            //        else if(mainwindowid.clickvisited3==true) filename=mainwindowid.visited3;
-            //        else if(mainwindowid.clickvisited4==true) filename=mainwindowid.visited4;
-            //        else if(mainwindowid.clickvisited5==true) filename=mainwindowid.visited5;
-            //        //var  filename = openfileDialog.fileUrl;
-            //        filerwritterid.m_fileName = filename;
-            //        var filedata = filerwritterid.readFile();
-            //        textareaid.setText(filedata);
-            //        mainwindowid.filepath = filename;
-            //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
-            //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
-            //        changevisited(filename);
-            //        //mainwindowid.visited1=filename;
-            //        textareaid.saved=false;
-            //        mainwindowid.clickvisited1=false;
-            //        mainwindowid.clickvisited2=false;
-            //        mainwindowid.clickvisited3=false;
-            //        mainwindowid.clickvisited4=false;
-            //        mainwindowid.clickvisited5=false;
         }
         onNo: {
-            //openfileDialog.open()
             openVisited()
-            //        var filename="";
-            //        if(mainwindowid.clickvisited1==true) filename=mainwindowid.visited1;
-            //        else if(mainwindowid.clickvisited2==true) filename=mainwindowid.visited2;
-            //        else if(mainwindowid.clickvisited3==true) filename=mainwindowid.visited3;
-            //        else if(mainwindowid.clickvisited4==true) filename=mainwindowid.visited4;
-            //        else if(mainwindowid.clickvisited5==true) filename=mainwindowid.visited5;
-            //        //var  filename = openfileDialog.fileUrl;
-            //        filerwritterid.m_fileName = filename;
-            //        var filedata = filerwritterid.readFile();
-            //        textareaid.setText(filedata);
-            //        mainwindowid.filepath = filename;
-            //        //var tmp=mainwindowid.filepath.lastIndexOf('/');
-            //        mainwindowid.filename=filepath.substr((filepath.lastIndexOf('/')+1));
-            //        changevisited(filename);
-            //        //mainwindowid.visited1=filename;
-            //        textareaid.saved=false;
-            //        mainwindowid.clickvisited1=false;
-            //        mainwindowid.clickvisited2=false;
-            //        mainwindowid.clickvisited3=false;
-            //        mainwindowid.clickvisited4=false;
-            //        mainwindowid.clickvisited5=false;
         }
         onRejected: {
             mainwindowid.clickvisited1 = false
@@ -489,11 +451,6 @@ ApplicationWindow {
         onNo: {
             openfileDialog.open()
         }
-
-        //   Cancel:
-        //   {
-        //       visible: false;
-        //   }
         visible: false
     }
 
@@ -512,11 +469,6 @@ ApplicationWindow {
         onNo: {
             fileDialogsaveanother.open()
         }
-
-        //   Cancel:
-        //   {
-        //       visible: false;
-        //   }
         visible: false
     }
 
@@ -541,11 +493,6 @@ ApplicationWindow {
             textareaid.saved = false
             fileOpened = false
         }
-
-        //   Cancel:
-        //   {
-        //       visible: false;
-        //   }
         visible: false
     }
 
@@ -564,14 +511,10 @@ ApplicationWindow {
         onNo: {
             fileDialog.open()
         }
-
-        //   Cancel:
-        //   {
-        //       visible: false;
-        //   }
         visible: false
     }
 
+    // 关于对话框
     MessageDialog {
         id: aboutappdialog
         title: "关于outliner5"
@@ -597,11 +540,9 @@ ApplicationWindow {
             var filedata = filerwritterid.readFile()
             textareaid.setText(filedata)
             mainwindowid.filepath = filename
-            //var tmp=mainwindowid.filepath.lastIndexOf('/');
             mainwindowid.filename = filepath.substr((filepath.lastIndexOf(
                                                          '/') + 1))
             changevisited(filename)
-            //mainwindowid.visited1=filename;
             textareaid.saved = false
         }
         onRejected: {
@@ -632,7 +573,6 @@ ApplicationWindow {
             mainwindowid.filename = filepath.substr((filepath.lastIndexOf(
                                                          '/') + 1))
             changevisited(filename)
-            //mainwindowid.visited1=filename;
             textareaid.saved = false
         }
         onRejected: {

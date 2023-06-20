@@ -1,9 +1,16 @@
 import QtQuick 2.13
 
+/**************************************************
+  大纲编辑控件：为一系列 Bullet 的组合，用于展示一篇完整
+  的 Markdown 文档。
+**************************************************/
+
 Item {
     id: root
     ListModel {
+        // 定义数据模型，用于表示 Markdown 文档内容到每一个 Bullet 当中
         id: docmodel
+        // 获取节点 idx 的子结点的最后一个结点的编号
         function getChildEnd(idx) {
             let childEnd = idx, level = get(idx).cur.level
             do {
@@ -13,16 +20,18 @@ Item {
         }
     }
     Component.onCompleted: {
+        // 初始化后为空编辑器
         clear()
     }
 
     ListView {
         anchors.fill: parent
         id: listview
-        model: docmodel
+        model: docmodel  // 使用 docmodel，用于表示里面的数据
         property bool bulletEditing: false
         property int selectionBegin: count
         property int selectionEnd: -1
+        // 以下三个属性用于聚焦
         property int displayLevelBase: 0
         property int displayBegin: 0
         property int displayEnd: count
@@ -54,13 +63,14 @@ Item {
             selectionEnd = Math.max(selectionEnd, childEnd)
         }
         delegate: Bullet {
+            // docmodel 中的每一个元素对应一个 Bullet
             raw: cur.raw
             level: cur.level - listview.displayLevelBase
             collapsed: cur.collapsed || false
             indexInList: index
             bulletFocus: bulletFocus_
             visible: displayCollapsed === 0 && index >= listview.displayBegin
-                     && index < listview.displayEnd
+                     && index < listview.displayEnd  // 是否在聚焦范围内，同时是非折叠节点
             height: visible ? implicitHeight : 0
             onTextChanged: {
                 root.textChanged()
@@ -75,6 +85,7 @@ Item {
                           event.modifiers, Qt.ShiftModifier)
             if (event.key === Qt.Key_R
                     && event.modifiers === Qt.ControlModifier) {
+                // Ctrl+R 重置聚焦
                 displayBegin = 0
                 displayEnd = count
                 displayLevelBase = 0
@@ -83,19 +94,23 @@ Item {
             if (!bulletEditing)
                 return
             if (event.key === Qt.Key_Down) {
+                // 下方向键
                 console.error('down select')
                 incrementCurrentIndex()
                 selectCurrent(true)
                 event.accepted = true
             } else if (event.key === Qt.Key_Up) {
+                // 上方向键
                 console.error('up select')
                 decrementCurrentIndex()
                 selectCurrent(false)
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
+                // Esc 退出编辑
                 event.accepted = true
                 exitBulletEditing()
             } else if (event.key === Qt.Key_Backspace) {
+                // 删除键
                 console.error('delete selection')
                 docmodel.remove(selectionBegin,
                                 selectionEnd - selectionBegin + 1)
@@ -105,6 +120,7 @@ Item {
     }
 
     function clear() {
+        // 清空编辑区域同时插入一个空的子弹节点
         docmodel.clear()
         docmodel.append({
                             "cur": {
@@ -119,6 +135,7 @@ Item {
 
     signal textChanged
 
+    // 用于将 docmodel 中的内容转换成可以保存的 Markdown 文本
     function getText() {
         const result = []
         for (var i = 0; i < docmodel.count; ++i) {
@@ -126,12 +143,6 @@ Item {
             const lines = element.cur.raw.replace("\r\n", "\n").split("\n")
             for (var idx = 0; idx < lines.length; ++idx) {
                 const line = lines[idx]
-                //                if (idx >= 1) {
-                //                    for (var j = 0; j < element.cur.level; ++j) {
-                //                        result.push("\t")
-                //                    }
-                //                    result.push("\n")
-                //                }
                 for (var j = 0; j < element.cur.level; ++j) {
                     result.push("\t")
                 }
@@ -150,6 +161,7 @@ Item {
         return result.join("")
     }
 
+    // 用于将 Markdown 文本转换为编辑器中的节点，使得用户可以进行编辑
     function setText(value) {
         const lines = value.replace("\r\n", "\n").split("\n")
         console.log('lines', lines)
@@ -179,10 +191,12 @@ Item {
                 const line = lines[idx]
                 console.log('line', line)
 
+                // 匹配一：节点的第一行
                 const regex = /(\t*)([-+]) (.*)/
                 const result = regex.exec(line)
 
                 if (!result) {
+                    // 匹配二：节点的后续行
                     const regex1 = /(\t*)(.*)/
                     let result1 = regex1.exec(line)
                     console.log(JSON.stringify(result1))
@@ -211,6 +225,7 @@ Item {
             addNewBlock()
 
             if (docmodel.count === 0) {
+                // 如果文档是空，插入一个子弹节点
                 docmodel.append({
                                     "cur": {
                                         "raw": "",
