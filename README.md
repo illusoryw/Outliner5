@@ -1,8 +1,6 @@
 # Outliner5
 
-Outliner5 是武汉大学计算机学院软件工程课程的大作业。
-
-Outliner5 is a outline-styled note app, implemented by C++ and Qt. 
+Outliner5 is an outline-styled note taking application, implemented in C++ and Qt.
 
 **Install**
 
